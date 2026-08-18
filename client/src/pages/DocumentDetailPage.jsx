@@ -57,12 +57,14 @@ export default function DocumentDetailPage() {
             ))}
           </div>
         </div>
-        <p className="muted">Total time spent: <strong>{Number(doc.totalTimeSpent || 0).toFixed(1)} hr</strong> across {doc.checkIns.length} linked check-in(s).</p>
+        <p className="muted" style={{ marginTop: '0.75rem' }}>Total time spent: <strong>{Number(doc.totalTimeSpent || 0).toFixed(1)} hr</strong> across {doc.checkIns.length} linked check-in(s).</p>
       </div>
       <AnalysisCard documentId={Number(id)} />
       <SuggestionList documentId={Number(id)} />
       <div className="card">
-        <h3>Log time against this document</h3>
+        <div className="section-header">
+          <h3>Log time against this document</h3>
+        </div>
         <form className="row" onSubmit={logTime}>
           <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs #procurement review vendor quote" />
           <button type="submit" disabled={saving || !text.trim()}>{saving ? 'Saving…' : 'Log'}</button>
@@ -70,7 +72,10 @@ export default function DocumentDetailPage() {
         {error && <p className="error-text">{error}</p>}
       </div>
       <div className="card">
-        <h3>Linked time entries</h3>
+        <div className="section-header">
+          <h3>Linked time entries</h3>
+          <span className="muted">{doc.checkIns.length} entries</span>
+        </div>
         {doc.checkIns.length ? (
           <table className="table">
             <thead><tr><th>Date</th><th>Hours</th><th>Tag</th><th>Activities</th><th>User</th></tr></thead>

@@ -31,7 +31,8 @@ export default function DocumentsPage() {
       <h1>Documents</h1>
       {error && <div className="error-banner">{error}</div>}
       <UploadForm onUploaded={() => { setPage(1); load(); }} />
-      <div className="card filters">
+      <div className="filter-bar">
+        <span className="filter-label">Filters</span>
         <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
           <option value="">All statuses</option>
           <option>pending</option><option>in-review</option><option>approved</option><option>rejected</option>

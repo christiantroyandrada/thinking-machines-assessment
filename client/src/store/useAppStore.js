@@ -14,22 +14,29 @@ function initialTheme() {
   return 'light';
 }
 
+const DEFAULT_USER = { id: 1, name: 'James Wong', department: 'Procurement', role: 'admin' };
+
 export const useAppStore = create((set, get) => ({
   theme: initialTheme(),
-  setTheme: (theme) => {
-    try {
-      localStorage.setItem('ws-theme', theme);
-    } catch {
-      /* ignore */
-    }
-    if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark', theme === 'dark');
-    }
-    set({ theme });
-  },
-  toggleTheme: () => get().setTheme(get().theme === 'dark' ? 'light' : 'dark'),
+  currentUser: DEFAULT_USER,
+  setTheme: (theme) => set({ theme }),
+  toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
+  setCurrentUser: (user) => set({ currentUser: user }),
 }));
 
-if (typeof document !== 'undefined') {
-  document.documentElement.classList.toggle('dark', useAppStore.getState().theme === 'dark');
+// Side effects live outside the store: keep state pure, sync DOM + persistence here.
+function applyTheme(theme) {
+  try {
+    localStorage.setItem('ws-theme', theme);
+  } catch {
+    /* ignore */
+  }
+  if (typeof document !== 'undefined') {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }
 }
+
+applyTheme(useAppStore.getState().theme);
+useAppStore.subscribe((state, prev) => {
+  if (state.theme !== prev.theme) applyTheme(state.theme);
+});

@@ -28,19 +28,31 @@ export default function HomePage() {
         <div className="card stat"><strong>{documents.length}</strong><span>documents</span></div>
         <div className="card stat"><strong>{Object.values(byStatus).reduce((a, b) => a + b, 0)}</strong><span>in status flow</span></div>
       </div>
-      <div className="cards-grid">
-        {insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
-      </div>
+      {insights.length > 0 && (
+        <div className="card">
+          <div className="section-header">
+            <h3>Insights</h3>
+          </div>
+          <div className="cards-grid" style={{ marginTop: '0.5rem' }}>
+            {insights.map((ins, i) => <InsightCard key={i} insight={ins} />)}
+          </div>
+        </div>
+      )}
       {anomalies.length > 0 && (
         <div className="card">
-          <h3>Anomalies detected</h3>
-          <div className="stack">
+          <div className="section-header">
+            <h3>Anomalies detected</h3>
+            <span className="muted">{anomalies.length} found</span>
+          </div>
+          <div className="stack" style={{ gap: '0.5rem', marginTop: '0.5rem' }}>
             {anomalies.map((a, i) => <AnomalyBanner key={i} anomaly={a} />)}
           </div>
         </div>
       )}
       <div className="card">
-        <h3>Time by tag</h3>
+        <div className="section-header">
+          <h3>Time by tag</h3>
+        </div>
         <TimeChart series={timeData.series || []} />
       </div>
     </div>

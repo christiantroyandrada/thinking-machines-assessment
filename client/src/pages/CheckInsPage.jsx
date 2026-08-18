@@ -66,8 +66,10 @@ export default function CheckInsPage() {
             ) : (
               <>
                 <strong>{c.hours}h</strong> <TagPill tag={c.tag} /> · {c.activities} — {c.userName} ({c.department})
-                <button type="button" onClick={() => handleDelete(c)}>Delete</button>
-                <button type="button" onClick={() => startEdit(c)}>Edit</button>
+                <div className="checkin-actions">
+                  <button type="button" className="btn-ghost" onClick={() => startEdit(c)}>Edit</button>
+                  <button type="button" className="btn-danger" onClick={() => handleDelete(c)}>Delete</button>
+                </div>
               </>
             )}
           </li>

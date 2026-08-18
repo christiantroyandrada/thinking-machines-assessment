@@ -36,7 +36,10 @@ export default function SearchPage() {
           <div className="card ai-answer"><strong>AI:</strong> {result.answer}</div>
           {result.results && result.results.length > 0 && (
             <div className="card">
-              <h3>Matches</h3>
+              <div className="section-header">
+                <h3>Matches</h3>
+                <span className="muted">{result.results.length} found</span>
+              </div>
               <ul className="suggestions">
                 {result.results.map((r) => (
                   <li key={r.id}>

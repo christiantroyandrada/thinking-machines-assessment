@@ -21,7 +21,7 @@ export default function AnalysisCard({ documentId }) {
 
   return (
     <div className="card">
-      <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="section-header" style={{ justifyContent: 'space-between' }}>
         <h3>AI Document Analysis</h3>
         <button onClick={analyze} disabled={busy}>{busy ? 'Analyzing…' : 'Analyze with AI'}</button>
       </div>

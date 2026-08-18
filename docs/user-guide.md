@@ -1,13 +1,13 @@
 # Meridian — User Guide
 
 A practical, click-by-click guide to the everyday workflows in WorkSmart (Meridian).
-The app has no login screen — it renders immediately, so you start on the
+The app has no login screen. It renders immediately, so you start on the
 dashboard and navigate with the top bar.
 
 > **Screenshots:** Each workflow below includes a real screenshot captured from
 > the running app (`docs/screenshots/*.png`, produced by
 > `scripts/capture-screenshots.mjs` driving Playwright against the local Docker
-> stack). The app has no login screen — it renders immediately.
+> stack). The app has no login screen. It renders immediately.
 
 ---
 
@@ -19,7 +19,7 @@ dashboard and navigate with the top bar.
 2. Type your entry in the free-text format, e.g.
    `5.5 hrs #project-x fix login issue`.
 3. As you type, the **parse preview** appears under the input and shows the
-   parsed result — `5.5 hr · #project-x` — confirming the hours and tag were
+   parsed result (`5.5 hr · #project-x`) confirms the hours and tag were
    understood.
 4. If the parser falls back to the `general` tag, a **Smart tag** checkbox is
    offered ("Smart tag this entry (AI)"). Tick it to let the AI suggest a more
@@ -34,7 +34,7 @@ dashboard and navigate with the top bar.
 
 **Where:** top bar → **Check-ins**.
 
-1. Every entry is listed as a line: `<hours>h #tag · activities — user (department)`,
+1. Every entry is listed as a line: `<hours>h #tag · activities, user (department)`,
    with **Delete** and **Edit** buttons beside it.
 2. **Filter:** type a tag into the "filter by tag" input at the top of the list
    to narrow results to that tag.
@@ -53,14 +53,14 @@ dashboard and navigate with the top bar.
 **Where:** top bar → **Analytics**.
 
 1. The page loads three sections:
-   - **Hours by tag** — a list of tags with their total hours.
-   - **Hours by department** — a table of `Department / Total / Avg per user`.
-   - **Document linkage** — for each document, `title — <linkedHours>h (<n> linked)`.
+   - **Hours by tag:** a list of tags with their total hours.
+   - **Hours by department:** a table of `Department / Total / Avg per user`.
+   - **Document linkage:** for each document, `title: <linkedHours>h (<n> linked)`.
 2. Read the **Hours by tag** list to see which projects consumed the most time.
 3. Open the **Hours by department** table to compare teams.
 4. Use the **Document linkage** section to see how much time each procurement
    document has absorbed. (Per-user and date breakdowns are surfaced via the
-   AI Search and Admin views — see workflows 6 and 7.)
+    AI Search and Admin views (see workflows 6 and 7).)
 
 ---
 
@@ -78,7 +78,7 @@ dashboard and navigate with the top bar.
 4. On the detail page, click **Analyze with AI** (in the *AI Document Analysis*
    card). Extracted fields render as a key/value list with a confidence score
    (mock rule-based extraction).
-5. Scroll to **Suggested next steps** — the system proposes workflow actions
+ 5. Scroll to **Suggested next steps:** the system proposes workflow actions
    with priority badges. These refresh via **Get suggestions**.
 6. Move the document through the workflow using the segmented status buttons:
    `pending → in-review → approved` (or `rejected`). The active status is
@@ -113,7 +113,7 @@ dashboard and navigate with the top bar.
    `"how much time on procurement this month?"`.
 2. Press **Ask AI**. While it processes, the button shows `Thinking…`.
 3. The **AI:** answer card returns a natural-language response.
-4. If the query matched records, a **Matches** card lists result cards — each
+ 4. If the query matched records, a **Matches** card lists result cards, each
    showing a `#tag`, the activities/title, and `hrs · user/status`.
 
 ---
@@ -132,7 +132,7 @@ dashboard and navigate with the top bar.
    **AnomalyBanner** items explaining unusual patterns.
 4. A **"Time by tag"** chart summarizes logged hours per tag.
 
-### Admin — team analytics
+### Admin: team analytics
 1. Open **Admin** → **Team Analytics**. Stat cards show `users`, `hrs logged`,
    and `active users`.
 2. The **Hours by department** table breaks hours down per department

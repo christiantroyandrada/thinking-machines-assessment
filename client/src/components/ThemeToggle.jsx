@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useAppStore } from '../store/useAppStore.js';
 
 function SunIcon() {
   return (
@@ -18,21 +18,8 @@ function MoonIcon() {
 }
 
 export default function ThemeToggle() {
-  const [dark, setDark] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    try {
-      const saved = localStorage.getItem('ws-theme');
-      if (saved) return saved === 'dark';
-      return typeof window.matchMedia === 'function' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch {
-      return false;
-    }
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', dark);
-    localStorage.setItem('ws-theme', dark ? 'dark' : 'light');
-  }, [dark]);
+  const dark = useAppStore((s) => s.theme === 'dark');
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
 
   return (
     <button
@@ -40,7 +27,7 @@ export default function ThemeToggle() {
       className="theme-toggle"
       aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
       aria-pressed={dark}
-      onClick={() => setDark((d) => !d)}
+      onClick={toggleTheme}
     >
       {dark ? <SunIcon /> : <MoonIcon />}
     </button>

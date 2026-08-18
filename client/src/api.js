@@ -1,9 +1,24 @@
 const BASE = import.meta.env.VITE_API_URL || '';
+let apiUserId = 1;
+
+export function setApiUser(id) {
+  apiUserId = Number(id) || 1;
+}
+
+function buildQuery(params = {}) {
+  const p = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') p.set(key, String(value));
+  }
+  return p.toString();
+}
 
 async function request(url, options = {}) {
+  const headers = { 'x-user-id': String(apiUserId) };
+  if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
   const res = await fetch(`${BASE}${url}`, {
-    headers: { 'Content-Type': 'application/json' },
     ...options,
+    headers: { ...headers, ...(options.headers || {}) },
   });
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
@@ -17,16 +32,8 @@ export async function getHealth() {
 }
 
 export async function listCheckIns(params = {}) {
-  const p = new URLSearchParams();
-  if (params.page) p.set('page', String(params.page));
-  if (params.pageSize) p.set('pageSize', String(params.pageSize));
-  if (params.tag) p.set('tag', params.tag);
-  if (params.userId) p.set('userId', String(params.userId));
-  if (params.department) p.set('department', params.department);
-  if (params.from) p.set('from', params.from);
-  if (params.to) p.set('to', params.to);
-  if (params.q) p.set('q', params.q);
-  return request(`/api/checkins?${p.toString()}`);
+  const qs = buildQuery({ page: params.page, pageSize: params.pageSize, tag: params.tag, userId: params.userId, department: params.department, from: params.from, to: params.to, q: params.q });
+  return request(`/api/checkins${qs ? `?${qs}` : ''}`);
 }
 
 export async function parseCheckIn(text) {
@@ -46,19 +53,12 @@ export async function deleteCheckIn(id) {
 }
 
 export async function listDocuments(params = {}) {
-  const p = new URLSearchParams();
-  if (params.page) p.set('page', String(params.page));
-  if (params.pageSize) p.set('pageSize', String(params.pageSize));
-  if (params.status) p.set('status', params.status);
-  if (params.type) p.set('type', params.type);
-  const qs = p.toString();
+  const qs = buildQuery({ page: params.page, pageSize: params.pageSize, status: params.status, type: params.type });
   return request(`/api/documents${qs ? `?${qs}` : ''}`);
 }
 
 export async function uploadDocument(formData) {
-  const res = await fetch(`${BASE}/api/documents`, { method: 'POST', body: formData });
-  if (!res.ok) throw new Error('Upload failed');
-  return res.json();
+  return request('/api/documents', { method: 'POST', body: formData });
 }
 
 export async function getDocument(id) {

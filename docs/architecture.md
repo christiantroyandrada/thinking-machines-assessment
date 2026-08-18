@@ -19,7 +19,7 @@ flowchart LR
 | Decision | Choice | Rationale |
 |---|---|---|
 | Frontend | React 18 + Vite (JavaScript) | Exam requires React; Vite for fast dev/build; JS per spec |
-| State | React component-local state, **NO global store** (the plan's Zustand was dropped during implementation) | UI state is local and request-scoped; no shared cross-component store needed, eliminating Zustand's boilerplate and a single point of mutable global state |
+| State | Zustand single app store; per-page data in local useState | The mock user identity (`x-user-id`) and the theme are shared across pages, so they live in one Zustand store (`client/src/store/useAppStore.js`); page data stays request-scoped in local useState. |
 | API | Node.js + Express | Same language as frontend; fast, minimal setup |
 | Persistence | Prisma + SQLite → Postgres | Zero local setup; one-line provider swap for production |
 | File uploads | multer (memory storage, 5MB cap) | Simple multipart handling for documents |
@@ -35,7 +35,7 @@ Document{ id, type, title, filename, mimeType, sizeBytes, contentText?, analysis
 ```
 
 **Rationale:**
-- `CheckIn.documentId → Document` is what lets us compute *time spent per document* and *link effort to concrete outputs* — the central insight of the case study.
+- `CheckIn.documentId → Document` is what lets us compute *time spent per document* and *link effort to concrete outputs*. That is the central insight of the case study.
 - `CheckIn.tag` powers activity analytics (smart/auto categorization + aggregation by dimension).
 - `Document.type` (enum: `PO`/`QUOTE`/`REQ`/`OTHER`) plus `contentText` and `analysis` make the model extensible to new document kinds without schema churn.
 - `User.department` (string, not enum) and `role` support multi-user org units and admin/user distinction via seed data.
@@ -55,20 +55,20 @@ All mock logic is isolated in `server/src/services/genai.js` as **pure functions
 - `mockTimeInsights(checkins)` → `[{ title, body, type }]`
 - `mockAnomalies(checkins, documents)` → `[{ entity, type, detail, severity }]`
 
-**Why isolate:** the API routes depend only on the function signatures, never the implementation. Swapping mocks for real LLMs means rewriting the bodies (or pointing them at a provider) without touching routes or UI — see `docs/genai-approach.md` for the per-feature mapping.
+**Why isolate:** the API routes depend only on the function signatures, never the implementation. Swapping mocks for real LLMs means rewriting the bodies (or pointing them at a provider) without touching routes or UI. See `docs/genai-approach.md` for the per-feature mapping.
 
 **Interface contracts → real LLM path (`docs/genai-approach.md`):**
 - **Categorize / Analyze** → function calling / structured-output schemas (JSON mode) with prompt + few-shot examples.
 - **Search** → embeddings + RAG over check-ins/documents; the model converts the question to a semantic query and generates a cited answer.
 - **Insights / Anomalies** → prompt-based summarization over aggregated stats and statistical baselines.
 
-## 6. Extensibility (Future-Proofing)
+## 6. Extensibility
 
-- **New document types** — `Document.type` is an enum (`PO`/`QUOTE`/`REQ`/`OTHER`); `contentText` + `analysis` fields support any extracted schema, so new doc types need only a new enum value and mock/parser rules.
-- **New departments / org units** — `User.department` is a string, not an enum; admin-managed orgs are a roadmap item.
-- **New GenAI features** — add a pure function in `genai.js` + a route; UI consumes the same JSON shape.
-- **New analytics dimensions** — `aggregateBy(checkins, dimension)` already generalizes over any field.
-- **Single GenAI swap path** — implement a `GenAIProvider` interface (`MockProvider` today, `LLMProvider` later) behind the existing service boundary.
+- **New document types.** `Document.type` is an enum (`PO`/`QUOTE`/`REQ`/`OTHER`); `contentText` + `analysis` fields support any extracted schema, so new doc types need only a new enum value and mock/parser rules.
+- **New departments / org units.** `User.department` is a string, not an enum; admin-managed orgs are a roadmap item.
+- **New GenAI features.** add a pure function in `genai.js` + a route; UI consumes the same JSON shape.
+- **New analytics dimensions.** `aggregateBy(checkins, dimension)` already generalizes over any field.
+- **Single GenAI swap path.** implement a `GenAIProvider` interface (`MockProvider` today, `LLMProvider` later) behind the existing service boundary.
 
 ## 7. Security & Robustness
 
@@ -76,4 +76,4 @@ All mock logic is isolated in `server/src/services/genai.js` as **pure functions
 - 5MB upload cap via multer limits; non-text files fall back to title/filename extraction.
 - Central `errorHandler` middleware returns consistent JSON `{ error }`; unknown routes return `404` JSON, server errors `500` JSON.
 - CORS is enabled for cross-origin deployment (client on Vercel, API on Render); origin-locking is slated for the roadmap.
-- Note: the in-memory aggregations in `/api/analytics/time`, `/api/ai/insights`, `/api/ai/anomalies`, and `/api/ai/search` load all rows into the API process. This is correct and fast at the seeded scale (2–5k rows); at enterprise scale these become SQL `groupBy` queries — documented as a scaling step.
+- Note: the in-memory aggregations in `/api/analytics/time`, `/api/ai/insights`, `/api/ai/anomalies`, and `/api/ai/search` load all rows into the API process. This is correct and fast at the seeded scale (2 to 5k rows); at enterprise scale these become SQL `groupBy` queries. Documented as a scaling step.

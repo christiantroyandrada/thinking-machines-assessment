@@ -44,7 +44,14 @@ async function main() {
   await db.document.deleteMany();
   await db.user.deleteMany();
 
+  // Reset SQLite AUTOINCREMENT so seeded IDs start at 1 (deleteMany does not reset the sequence).
+  await db.$executeRawUnsafe(`DELETE FROM sqlite_sequence`);
+
   const users = [];
+  users.push(
+    { name: 'James Wong', email: 'james.wong@meridian.com', department: 'Engineering', role: 'admin' },
+    { name: 'Maria Chen', email: 'maria.chen@meridian.com', department: 'Finance', role: 'admin' },
+  );
   for (const [dept, count] of Object.entries(DEPARTMENTS)) {
     for (let i = 0; i < count; i++) {
       users.push({
@@ -55,10 +62,6 @@ async function main() {
       });
     }
   }
-  users.push(
-    { name: 'James Wong', email: 'james.wong@meridian.com', department: 'Engineering', role: 'admin' },
-    { name: 'Maria Chen', email: 'maria.chen@meridian.com', department: 'Finance', role: 'admin' },
-  );
 
   await db.user.createMany({ data: users });
   const dbUsers = await db.user.findMany();

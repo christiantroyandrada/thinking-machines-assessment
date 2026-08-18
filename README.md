@@ -1,99 +1,88 @@
 # WorkSmart — GenAI-Enhanced Work Management Platform
 
-> Take-home submission for the Engineering Consultant (Software Engineering) role at Thinking Machines Data Science.
-> Case study: **Meridian Manufacturing** — unified time tracking + procurement document management with GenAI features.
-> Authored in-character as a Thinking Machines software engineer, per the exam brief.
+Take-home submission for the Engineering Consultant (Software Engineering) role at Thinking Machines Data Science.
+Case study: Meridian Manufacturing. Unified time tracking plus procurement document management, with GenAI features.
+Written in-character as a Thinking Machines software engineer, per the exam brief.
 
----
+## Quick Links (Master Index)
 
-## 📌 Quick Links (Master Index)
-
-This README is the **single index of all deliverables** the exam asks for. Every file is linked here and (where applicable) in the Submission Notes below.
+This README indexes every deliverable the exam asks for. Each file is linked here and in Submission Notes below.
 
 | Deliverable | Link / Status |
-|---|---|
-| 🚀 Deployed App | *To be added after deploy — see [Deployment](#-deployment)* |
-| 💻 Source Code (GitHub, private) | this repository |
-| 🎥 Demo Video (≤5 min) | *To be added — see [`docs/presentation/demo-script.md`](./docs/presentation/demo-script.md)* |
-| 📊 Slides (≤5) | [`docs/presentation/slides.md`](./docs/presentation/slides.md) |
-| 📄 Product Vision (2–3 pp) | [`docs/product-vision.md`](./docs/product-vision.md) |
-| 🗺️ Product Roadmap (1–2 pp) | [`docs/roadmap.md`](./docs/roadmap.md) |
-| 🏗️ Architecture Diagram + Decisions | [`docs/architecture.md`](./docs/architecture.md) (+ [`docs/architecture-diagram.md`](./docs/architecture-diagram.md)) |
-| 🤖 Mock GenAI Implementation Notes | [`docs/genai-approach.md`](./docs/genai-approach.md) |
-| 📘 User Guide (w/ screenshots) | [`docs/user-guide.md`](./docs/user-guide.md) |
-| 📜 API Reference | [`docs/api.md`](./docs/api.md) |
-| 🧵 AI Tool Usage Log (prompts + outputs) | [`docs/ai-usage-log.md`](./docs/ai-usage-log.md) |
-| 📓 Project Journal | [`docs/journal.md`](./docs/journal.md) |
+| --- | --- |
+| Deployed App | Local Docker verified (client :8080, API :4000). Public URL pending. See Deployment. |
+| Source Code (GitHub, private) | this repository |
+| Demo Video (under 5 min) | docs/presentation/demo.webm (script: docs/presentation/demo-script.md) |
+| Slides (5 or fewer) | docs/presentation/slides.md |
+| Product Vision (2 to 3 pages) | docs/product-vision.md |
+| Product Roadmap (1 to 2 pages) | docs/roadmap.md |
+| Architecture Diagram + Decisions | docs/architecture.md and docs/architecture-diagram.md |
+| Mock GenAI Implementation Notes | docs/genai-approach.md |
+| User Guide (with screenshots) | docs/user-guide.md |
+| API Reference | docs/api.md |
+| AI Tool Usage Log (prompts and outputs) | docs/ai-usage-log.md |
+| Project Journal | docs/journal.md |
 
-> **Transparency:** prompts given to the AI coding tool and the generated outputs are logged with **real transcripts** in [`docs/ai-usage-log.md`](./docs/ai-usage-log.md) (see *§Real conversation transcripts*), as required by the exam.
+Transparency: the prompts sent to the AI coding tool and the outputs it produced are logged with real transcripts in docs/ai-usage-log.md (section "Real conversation transcripts"), as the exam requires.
 
----
+## Overview
 
-## 🧭 Overview
+WorkSmart is a GenAI-enhanced work management platform built for Meridian Manufacturing. It combines three things:
 
-**WorkSmart** is a GenAI-enhanced work management platform built for Meridian Manufacturing, combining:
+1. Time tracking. Structured check-ins (`<number> [hr|hrs] #<tag> <activities>`), multi-user support, and charts by tag, date, department, or user.
+2. Document management. Upload, store, and track procurement documents (POs, quotes, requisitions), linked to time entries with per-document time totals.
+3. GenAI features. Six of six mock-implemented UX touchpoints. The exam requires a minimum of three.
 
-1. **Time Tracking** — structured check-ins (`<number> [hr|hrs] #<tag> <activities>`), multi-user support, and visualizations by tag / date / department / user.
-2. **Intelligent Document Management** — upload, store, and status-track procurement documents (POs, quotes, requisitions), linked to time entries with per-document time totals.
-3. **GenAI Features** — **6 of 6** mock-implemented, UX-first touchpoints (the exam requires a minimum of 3).
+Problem it solves: Meridian logs time in spreadsheets and handles procurement documents by hand. That makes productivity, resource allocation, and document throughput hard to measure. WorkSmart puts both in one place and surfaces insights, including AI-written summaries and anomaly flags, that were not possible before.
 
-### Problem it solves
-Meridian logs time in spreadsheets and processes procurement documents manually, making productivity, resource allocation, and document throughput hard to analyze. WorkSmart unifies both and surfaces insights (including AI-generated narratives and anomaly flags) that weren't previously possible.
+## Features (all implemented)
 
----
+Core time tracking
+- Structured check-in parser (`<number> [hr|hrs] #<tag> <activities>`)
+- View and paginate 1,000+ check-ins
+- Group and chart by tag, date, department, or user
+- Edit and delete check-ins
+- Multi-user support (132 users seeded)
+- Light and dark theme (class-based toggle, persists choice, respects prefers-color-scheme) with accessibility (focus-visible rings, skip-to-content link, aria labels, reduced-motion safe). Built with Tailwind CSS v4.
 
-## ✅ Features (all implemented)
+Document management
+- Upload and store procurement documents (POs, quotes, requisitions)
+- Link documents to time entries
+- Track time spent per document (`totalTimeSpent`)
+- Status tracking (pending, in-review, approved, rejected)
 
-### Core Time Tracking
-- [x] Structured check-in parser (`<number> [hr|hrs] #<tag> <activities>`)
-- [x] View / paginate 1000+ check-ins
-- [x] Group / visualize by tag, date, department, user
-- [x] Edit / delete check-ins
-- [x] Multi-user support (seeded **132 users**)
-- [x] **Light / dark theme** (class-based toggle, persists choice, respects `prefers-color-scheme`) + **accessibility** (focus-visible rings, skip-to-content link, `aria` labels, `color-scheme` aware, reduced-motion safe) — built with Tailwind CSS v4
+GenAI features (mock implementations; six built, three required)
+- Smart Categorization. Suggested tags in the check-in form from free text.
+- Document Analysis. Mock field extraction (vendor, amount, dates, line items) on the document detail page.
+- Workflow Suggestions. Next-step recommendations per document.
+- Natural Language Search. Ask about check-ins or documents in plain English. Returns an answer plus result cards.
+- Time Insights. Productivity and usage summaries on the dashboard.
+- Anomaly Detection. Flags long entries, missing documents, weekend work, and more.
 
-### Intelligent Document Management
-- [x] Upload & store procurement documents (POs, quotes, requisitions)
-- [x] Link documents to time entries
-- [x] Track time spent per document (`totalTimeSpent`)
-- [x] Status tracking (pending / in-review / approved / rejected)
+All GenAI features are mocks, as the exam allows ("you are NOT required to implement actual GenAI integration"). Each sits behind a swappable service boundary so a real LLM can replace it later. See docs/genai-approach.md.
 
-### GenAI Features (mock implementations; 6 implemented, min 3 required)
-- [x] **Smart Categorization** — suggested tags in the check-in form from free-text
-- [x] **Document Analysis** — mock field extraction (vendor, amount, dates, line items) on the document detail page
-- [x] **Workflow Suggestions** — next-step recommendations per document
-- [x] **Natural Language Search** — query check-ins/documents in plain English → answer + result cards
-- [x] **Time Insights** — productivity / usage pattern summaries on the dashboard
-- [x] **Anomaly Detection** — flags long entries, missing docs, weekend work, etc.
-
-> All GenAI features are **mock** implementations per the exam ("you are NOT required to implement actual GenAI integration"). Each is designed behind a swappable service boundary so it can later be replaced by a real LLM — see [`docs/genai-approach.md`](./docs/genai-approach.md).
-
----
-
-## 🏗️ Tech Stack
+## Tech Stack
 
 | Layer | Choice | Why |
-|---|---|---|
-| Frontend | React.js (Vite, **JavaScript, not TS**) + **Tailwind CSS v4** | Required by spec; Vite for fast dev/build; Tailwind v4 (CSS-first `@theme`, design tokens in `client/src/styles.css`) for a maintainable, centralized design system |
-| State | **React component-local state** (no global store) | The plan's Zustand store was dropped during implementation — the app uses local `useState` + a single `api.js` client; this keeps the client simple and the `api.js` boundary easy to swap |
-| Backend | Node.js + Express | Same language as frontend; minimal setup |
-| Database | SQLite (Prisma) → Postgres if deployed | Zero local setup with SQLite; Prisma makes the swap trivial |
-| Deployment | Vercel (frontend) + Render (backend + Postgres) | Fast zero-config deploys with free tiers |
-| GenAI (mocked) | Rule-based fixtures & keyword matches | UX-focused mocks: deterministic, no external APIs |
+| --- | --- | --- |
+| Frontend | React (Vite, JavaScript not TypeScript) and Tailwind CSS v4 | Required by spec. Vite for fast dev and build. Tailwind v4 (CSS-first @theme, tokens in client/src/styles.css) for one design system. |
+| State | React component-local state (no global store) | The planned Zustand store was dropped during build. The app uses local useState and one api.js client, which keeps the client simple and the api.js boundary easy to swap. |
+| Backend | Node.js and Express | Same language as the frontend. Minimal setup. |
+| Database | SQLite via Prisma, with a Postgres path for deploy | Zero local setup with SQLite. Prisma makes the swap trivial. |
+| Deployment | Vercel (frontend) and Render (backend plus Postgres) | Fast zero-config deploys on free tiers. |
+| GenAI (mocked) | Rule-based fixtures and keyword matches | Deterministic mocks. No external APIs. |
 
-Full rationale in [`docs/architecture.md`](./docs/architecture.md).
+Full rationale is in docs/architecture.md.
 
----
-
-## 📂 Project Structure
+## Project Structure
 
 ```
 worksmart/
 ├── client/                 # React frontend (Vite)
 │   ├── src/
 │   │   ├── api.js          # single API client (VITE_API_URL-aware)
-│   │   ├── pages/          # CheckIns, Analytics, Documents, DocumentDetail, Search, Home(dashboard), Admin
-│   │   └── components/     # Pagination, StatusBadge, TagPill, InsightCard, AnomalyBanner, TimeChart, ...
+│   │   ├── pages/          # CheckIns, Analytics, Documents, DocumentDetail, Search, Home (dashboard), Admin
+│   │   └── components/     # Pagination, StatusBadge, TagPill, InsightCard, AnomalyBanner, TimeChart
 │   ├── Dockerfile
 │   └── nginx.conf
 ├── server/                 # Express API
@@ -101,25 +90,23 @@ worksmart/
 │   │   ├── routes/         # checkins, analytics, users, documents, ai, admin
 │   │   ├── services/       # parser, analytics, genai (mock engine)
 │   │   └── middleware/      # auth (x-user-id), error
-│   ├── prisma/             # schema + SQLite dev db
+│   ├── prisma/             # schema and SQLite dev db
 │   ├── Dockerfile
 │   └── render.yaml         # Render blueprint (deploy)
-├── docs/                   # All written deliverables (see Quick Links)
+├── docs/                   # all written deliverables (see Quick Links)
 ├── docker-compose.yml      # containerized local run
 └── README.md               # this master index
 ```
 
----
+## Getting Started
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js ≥ 20 (developed against v24)
+Prerequisites
+- Node.js 20 or newer (developed on v24)
 - npm
-- SQLite (bundled — no install needed for local dev)
+- SQLite (bundled, no install for local dev)
 - Docker (optional, for containerized run)
 
-### Installation
+Installation
 ```bash
 git clone <your-private-repo-url> worksmart
 cd worksmart
@@ -130,102 +117,90 @@ npm --prefix client install
 cp server/.env.example server/.env   # DATABASE_URL defaults to local SQLite
 
 npm run migrate     # npx prisma db push
-npm run seed        # 132 users, 2591 check-ins, 9 documents
+npm run seed        # 132 users and 2,600+ check-ins, 9 documents
 ```
 
-### Running locally
+Run locally
 ```bash
 npm run dev:server   # http://localhost:4000
-npm run dev:client   # http://localhost:5173 (Vite proxies /api -> :4000)
+npm run dev:client   # http://localhost:5173 (Vite proxies /api to :4000)
 ```
 
-### Running with Docker (bonus)
+Run with Docker
 ```bash
 docker compose up --build
 # client (nginx)  -> http://localhost:8080
 # server (API)    -> http://localhost:4000
 ```
 
-### Running tests
+Run tests
 ```bash
 npm --prefix server test    # 49 tests
 npm --prefix client test    # 14 tests
 npm --prefix client run build
-npm run test:e2e            # Playwright E2E + API integration (needs Docker stack running)
+npm run test:e2e            # Playwright E2E plus API integration (needs Docker stack running)
 ```
 
----
+## Deployment
 
-## 🌐 Deployment
+The app is containerized and ships with Render plus Vercel config so it can be reached at a public URL (exam requirement: "The application should be accessible via a URL").
 
-The app is **containerized** and ships with Render + Vercel configuration so it is reachable via a public URL (exam requirement: *"The application should be accessible via a URL"*).
+- server/render.yaml. Render web service and free Postgres blueprint.
+- client/vercel.json. Vercel build and output config. Set VITE_API_URL to the Render API URL.
+- docker-compose.yml. One-command local deployment.
+- The SQLite to Postgres swap is documented in docs/architecture.md and server/.env.production.example.
 
-- `server/render.yaml` — Render web service + free Postgres blueprint.
-- `client/vercel.json` — Vercel build/output config; set `VITE_API_URL` to the Render API URL.
-- `docker-compose.yml` — one-command local deployment.
-- Production DB swap (SQLite → Postgres) is documented in [`docs/architecture.md`](./docs/architecture.md) and [`server/.env.production.example`](./server/.env.production.example).
+The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing (7 Playwright specs).
 
-> The live Deployed App URL (Render + Vercel, Task 35) is filled into the Quick Links table after the manual deploy steps. The containerized app is **verified running locally** via Docker: client at `http://localhost:8080` and API at `http://localhost:4000`, with `npm run test:e2e` passing (7 Playwright specs).
+## GenAI Tooling Disclosure
 
----
+This submission's planning, code scaffolding, and documentation were assisted by opencode, an AI coding agent. Prompts and outputs are logged in docs/ai-usage-log.md (with links and screenshots of the working conversation), per the exam's transparency requirement.
 
-## 🤖 GenAI Tooling Disclosure
+## Assumptions Made
 
-This submission's planning, code scaffolding, and documentation were assisted by **opencode** (an AI coding agent). Prompts and generated outputs are logged in [`docs/ai-usage-log.md`](./docs/ai-usage-log.md) (with links/screenshots of the working conversation), per the exam's transparency requirement.
+- Multi-user. No real auth was built (UX-first scope). Identity travels in the x-user-id HTTP header. The API defaults to user 1 (James Wong, admin) when the header is absent. There is no in-app user switcher; callers and tests set x-user-id directly. Documented in docs/api.md.
+- Departments. Seeded string list (Procurement, Engineering, Finance, Operations, Sales, HR) until an admin-managed org structure is scoped.
+- Check-in tags. Free-form strings normalized to lowercase. Missing tags default to general and are eligible for Smart Categorization.
+- Document text. Uploaded files are read as UTF-8 text for mock analysis. Binary files fall back to filename or title based extraction.
+- Data volume. Seeded with 132 users and 2,600+ check-ins. This clears the 100+ users and 1,000+ entries bar out of the box.
+- GenAI. All six GenAI features are deterministic mocks behind server/src/services/genai.js, built to be swapped for a real LLM later.
 
----
+Full rationale is in docs/architecture.md and docs/journal.md.
 
-## 📋 Assumptions Made
+## Roadmap Summary
 
-- **[Multi-user]** No real auth was built (UX-first scope). Identity is carried by the `x-user-id` HTTP header; the API defaults to user `1` (James Wong, admin) when the header is absent. There is **no in-app user switcher** — callers (and tests) set `x-user-id` directly. This is documented in [`docs/api.md`](./docs/api.md).
-- **[Departments]** Seeded string list (Procurement, Engineering, Finance, Operations, Sales, HR) until an admin-managed org structure is scoped.
-- **[Check-in tags]** Free-form strings normalized to lowercase; missing tags default to `general` and are eligible for Smart Categorization.
-- **[Document text]** Uploaded files are read as UTF-8 text for mock analysis; binary files fall back to filename/title-based extraction.
-- **[Data volume]** Seeded with **132 users and 2630 check-ins** (exceeds the 100+ users / 1000+ entries requirements out of the box).
-- **[GenAI]** All six GenAI features are deterministic mocks behind `server/src/services/genai.js`, designed to be swapped for a real LLM later.
+Short-term (3 to 6 months), medium-term (6 to 12 months), and long-term (12+ months) priorities are in docs/roadmap.md. They cover the mock to real GenAI path, RBAC, ERP integration, and challenge mitigations.
 
-Full rationale in [`docs/architecture.md`](./docs/architecture.md) and [`docs/journal.md`](./docs/journal.md).
-
----
-
-## 🗺️ Roadmap Summary
-
-Short-term (3–6mo), medium-term (6–12mo), and long-term (12mo+) priorities — including the mock→real GenAI path, RBAC, ERP integration, and challenge mitigations — are detailed in [`docs/roadmap.md`](./docs/roadmap.md).
-
----
-
-## 📑 Exam Requirements → Deliverables Map
+## Exam Requirements to Deliverables Map
 
 | Exam requirement | Where it lives |
-|---|---|
-| Working app (repo + URL) | this repo; deploy config in `server/render.yaml`, `client/vercel.json`, `docker-compose.yml` |
+| --- | --- |
+| Working app (repo and URL) | this repo. Deploy config in server/render.yaml, client/vercel.json, docker-compose.yml |
 | README with setup | this file |
-| Architecture diagram + decisions | `docs/architecture.md`, `docs/architecture-diagram.md` |
-| Mock GenAI approach + details | `docs/genai-approach.md` |
-| User guide w/ screenshots | `docs/user-guide.md` (+ `docs/screenshots/`) |
-| Product vision (2–3 pp) | `docs/product-vision.md` |
-| Product roadmap (1–2 pp) | `docs/roadmap.md` |
-| Demo video (≤5 min) + slides (≤5) | `docs/presentation/` |
-| ≥3 GenAI features | 6 implemented (see Features) |
-| React frontend + DB persistence | `client/`, `server/` (Prisma + SQLite) |
-| Responsive, intuitive UI | `client/src/styles.css` (mobile breakpoints) |
-| Document GenAI approach | `docs/genai-approach.md` |
+| Architecture diagram and decisions | docs/architecture.md, docs/architecture-diagram.md |
+| Mock GenAI approach and details | docs/genai-approach.md |
+| User guide with screenshots | docs/user-guide.md and docs/screenshots/ |
+| Product vision (2 to 3 pages) | docs/product-vision.md |
+| Product roadmap (1 to 2 pages) | docs/roadmap.md |
+| Demo video (under 5 min) and slides (5 or fewer) | docs/presentation/ |
+| At least 3 GenAI features | 6 built (see Features) |
+| React frontend and DB persistence | client/ and server/ (Prisma and SQLite) |
+| Responsive, intuitive UI | client/src/styles.css (mobile breakpoints) |
+| Document GenAI approach | docs/genai-approach.md |
 | Accessible via URL | Deployment section |
-| Bonus: admin analytics | `client/src/pages/AdminPage.jsx` + `/api/admin/analytics` |
-| Bonus: Dockerize | `docker-compose.yml` + Dockerfiles |
-| Bonus: procurement workflows | document upload/status/linking + suggestions |
-| Bonus: extendable architecture | `Document.type` enum + `contentText`/`analysis` fields; doc `genai-approach.md` |
-| Bonus: error handling | `server/src/middleware/error.js` + `server/tests/error.test.js` |
-| Bonus: project journal | `docs/journal.md` |
-| Bonus: test coverage | 49 server + 14 client tests |
-| Bonus: API documentation | `docs/api.md` |
+| Bonus: admin analytics | client/src/pages/AdminPage.jsx and /api/admin/analytics |
+| Bonus: Dockerize | docker-compose.yml and Dockerfiles |
+| Bonus: procurement workflows | document upload, status, linking, and suggestions |
+| Bonus: extendable architecture | Document.type enum, contentText and analysis fields. See docs/genai-approach.md |
+| Bonus: error handling | server/src/middleware/error.js and server/tests/error.test.js |
+| Bonus: project journal | docs/journal.md |
+| Bonus: test coverage | 49 server tests and 14 client tests |
+| Bonus: API documentation | docs/api.md |
 
----
+## Submission Notes
 
-## 🙋 Submission Notes
-
-- Repository is **private**; `exam.txt` is gitignored and **not** committed (per exam instructions not to leak the brief).
-- Repository shared privately with: `mamerisawesome`, `tm-chester-supelana`, `butchtm`, `tm-jase-evangelista`, `tm-glenn`.
+- Repository is private. exam.txt is gitignored and not committed (per exam instructions not to leak the brief).
+- Repository is shared privately with: mamerisawesome, tm-chester-supelana, butchtm, tm-jase-evangelista, tm-glenn.
 - All written deliverables are linked from this README (the exam's "index all your files in one document" requirement).
-- Submitted to: **hiring@thinkingmachin.es** (email stops the 72-hour timer).
-- Author: Christian Andrada — submitted in-character as a Thinking Machines software engineer.
+- Submitted to hiring@thinkingmachin.es (email stops the 72-hour timer).
+- Author: Christian Andrada. Submitted in-character as a Thinking Machines software engineer.

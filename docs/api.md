@@ -119,7 +119,7 @@ List, filter and paginate check-ins. Query params: `page` (default 1), `pageSize
 ### POST `/api/checkins`
 Accepts **either** a parsed-text body or a structured body.
 
-- Text body: `{ "text": "1.5 hrs #meeting standup" }` — parsed by `services/parser.js`. Invalid parses return `400 { error }`.
+- Text body: `{ "text": "1.5 hrs #meeting standup" }` parsed by `services/parser.js`. Invalid parses return `400 { error }`.
 - Structured body: `{ "hours": number, "tag": string, "activities": string, "date": string (optional), "documentId": number (optional) }`.
 
 Optional flag `useSmartTag: true` triggers `mockCategorize` from `services/genai.js` to set the tag when `tag` is omitted. Tags are lowercased; a leading `#` is stripped.
@@ -177,7 +177,7 @@ Document aggregates. `linkedCheckIns` is the count of linked check-ins; `linkedH
 ```
 
 ### POST `/api/documents` (multipart/form-data)
-Upload a document. Fields: `file` (binary, max 5 MB), `title` (optional — defaults to filename), `type` (required, one of `PO`, `QUOTE`, `REQ`).
+Upload a document. Fields: `file` (binary, max 5 MB), `title` (optional, defaults to filename), `type` (required, one of `PO`, `QUOTE`, `REQ`).
 
 Returns the created document record (including `id`, `title`, `type`, `status`, `mimeType`, `sizeBytes`, `contentText`, `createdAt`, `updatedAt`).
 

@@ -1,0 +1,386 @@
+/* =========================================================================
+   WorkSmart — Tailwind CSS v4 design system
+   Industrial-modern · warm paper · single amber accent
+   Tokens live in @theme (single source of truth); semantic classes preserved.
+   ========================================================================= */
+
+@import "tailwindcss";
+
+@theme {
+  /* Surfaces (warm, never pure white/black) */
+  --color-paper: oklch(0.985 0.003 85);
+  --color-surface: oklch(1 0 0);
+  --color-surface-2: oklch(0.972 0.004 85);
+  --color-ink: oklch(0.25 0.012 60);
+  --color-ink-2: oklch(0.45 0.01 60);
+  --color-muted: oklch(0.56 0.008 60);
+
+  /* Hairlines */
+  --color-line: oklch(0.90 0.004 85);
+  --color-line-strong: oklch(0.83 0.005 85);
+
+  /* Brand accent — industrial amber */
+  --color-accent: oklch(0.68 0.157 63);
+  --color-accent-strong: oklch(0.62 0.16 55);
+  --color-accent-ink: oklch(0.28 0.07 55);
+  --color-accent-soft: oklch(0.965 0.035 75);
+
+  /* Semantic — tinted, never pure */
+  --color-pending: oklch(0.965 0.045 82);  --color-pending-fg: oklch(0.46 0.10 72);
+  --color-review: oklch(0.965 0.028 245);   --color-review-fg: oklch(0.43 0.09 250);
+  --color-approved: oklch(0.965 0.05 150);  --color-approved-fg: oklch(0.38 0.09 150);
+  --color-rejected: oklch(0.965 0.038 25);  --color-rejected-fg: oklch(0.48 0.13 25);
+  --color-danger: oklch(0.55 0.17 25);       --color-danger-bg: oklch(0.965 0.04 25);
+  --color-danger-fg: oklch(0.46 0.14 25);
+
+  /* Type */
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-body: "Hanken Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Radii & shadows */
+  --radius-card: 14px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 1px 2px oklch(0.25 0.01 60 / 0.05);
+  --shadow-card: 0 1px 2px oklch(0.25 0.01 60 / 0.04), 0 10px 30px oklch(0.25 0.01 60 / 0.07);
+}
+
+/* ---------- Dark theme (class-based, overrides tokens above) ---------- */
+.dark {
+  --color-paper: oklch(0.17 0.008 70);
+  --color-surface: oklch(0.21 0.01 70);
+  --color-surface-2: oklch(0.26 0.012 70);
+  --color-ink: oklch(0.96 0.004 85);
+  --color-ink-2: oklch(0.80 0.01 85);
+  --color-muted: oklch(0.64 0.012 85);
+  --color-line: oklch(0.30 0.01 75);
+  --color-line-strong: oklch(0.38 0.012 75);
+  --color-accent: oklch(0.76 0.145 68);
+  --color-accent-strong: oklch(0.82 0.14 70);
+  --color-accent-ink: oklch(0.20 0.06 55);
+  --color-accent-soft: oklch(0.30 0.045 72);
+  --color-pending: oklch(0.26 0.05 82);    --color-pending-fg: oklch(0.86 0.07 82);
+  --color-review: oklch(0.24 0.04 245);    --color-review-fg: oklch(0.82 0.07 250);
+  --color-approved: oklch(0.22 0.05 150);  --color-approved-fg: oklch(0.84 0.08 150);
+  --color-rejected: oklch(0.26 0.05 25);   --color-rejected-fg: oklch(0.86 0.09 25);
+  --color-danger: oklch(0.66 0.18 25);
+  --color-danger-bg: oklch(0.26 0.05 25);
+  --color-danger-fg: oklch(0.86 0.09 25);
+}
+
+@layer base {
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+    font-size: 15px; line-height: 1.6;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-ink;
+    line-height: 1.1; letter-spacing: -0.02em; font-weight: 800; margin: 0;
+  }
+  h1 { font-size: 2rem; font-weight: 900; }
+  h2 { font-size: 1.4rem; }
+  h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em; }
+  a { @apply text-accent-strong; text-decoration: none; }
+  a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  code {
+    @apply font-mono text-ink bg-surface-2 border border-line;
+    font-size: 0.85em; padding: 1px 6px; border-radius: 6px;
+  }
+  .muted { @apply text-muted; }
+}
+
+@layer components {
+  /* ---------- App shell ---------- */
+  .app { min-height: 100vh; display: flex; flex-direction: column; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    @apply flex items-center gap-5 h-[60px] px-5 bg-surface/90 border-b border-line;
+    backdrop-filter: saturate(140%) blur(10px);
+    border-top: 3px solid var(--color-accent);
+  }
+  .brand {
+    @apply flex items-center gap-3 font-display font-black text-ink;
+    font-size: 1.18rem; letter-spacing: -0.03em;
+  }
+  .brand:hover { text-decoration: none; }
+  .brand::before {
+    content: ""; width: 0.85rem; height: 0.85rem;
+    background: var(--color-accent); border-radius: 4px;
+    transform: rotate(45deg); box-shadow: 0 0 0 4px var(--color-accent-soft);
+  }
+  .topbar nav { @apply flex gap-2 flex-wrap; margin-left: auto; }
+  .topbar nav a {
+    @apply text-ink-2 font-semibold; font-size: 0.92rem;
+    padding: 0.5rem 0.75rem; border-radius: var(--radius-sm);
+    position: relative; transition: color 0.15s ease, background 0.15s ease;
+  }
+  .topbar nav a:hover { @apply text-ink bg-surface-2; text-decoration: none; }
+  .topbar nav a::after {
+    content: ""; position: absolute; left: 0.75rem; right: 0.75rem; bottom: 4px;
+    height: 2px; background: var(--color-accent); border-radius: 2px;
+    transform: scaleX(0); transform-origin: left; transition: transform 0.18s ease;
+  }
+  .topbar nav a:hover::after { transform: scaleX(1); }
+
+  .content {
+    width: 100%; max-width: 1080px; margin: 0 auto;
+    padding: 3rem 1.25rem 4rem; flex: 1 1 auto;
+    animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* ---------- Layout primitives ---------- */
+  .stack { @apply flex flex-col gap-5; }
+  .row { @apply flex items-center gap-3 flex-wrap; }
+  .cards-grid {
+    @apply grid gap-4;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  /* ---------- Cards ---------- */
+  .card {
+    @apply bg-surface border border-line rounded-card p-6 shadow-soft;
+    transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .card:hover { @apply shadow-card; border-color: var(--color-line-strong); }
+
+  .stat { @apply flex flex-col gap-0.5 p-6; }
+  .stat strong {
+    @apply font-display font-black text-ink;
+    font-size: 2.4rem; line-height: 1; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em;
+    @apply text-muted font-semibold;
+  }
+
+  /* ---------- Insight / anomaly ---------- */
+  .insight { @apply flex flex-col gap-2; }
+  .insight h4 { font-size: 1rem; }
+  .insight .muted {
+    @apply font-mono text-accent-strong;
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .anomaly {
+    @apply flex items-baseline gap-3 text-[0.9rem] border border-line rounded-sm;
+    padding: 0.75rem 1rem;
+  }
+  .anomaly .muted { @apply text-ink-2; }
+  .severity-high { background: var(--color-danger-bg); border-color: color-mix(in oklch, var(--color-danger) 25%, var(--color-line)); }
+  .severity-medium { background: var(--color-pending); border-color: color-mix(in oklch, var(--color-pending-fg) 25%, var(--color-line)); }
+  .severity-low { background: var(--color-surface-2); }
+
+  /* ---------- Tables ---------- */
+  .table, .analytics table { @apply w-full border-collapse text-[0.9rem]; }
+  .table th, .analytics table th {
+    @apply text-left font-mono font-semibold text-muted;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.75rem 0.75rem; border-bottom: 1px solid var(--color-line-strong);
+  }
+  .table td, .analytics table td {
+    padding: 0.75rem 0.75rem; border-bottom: 1px solid var(--color-line);
+    vertical-align: middle;
+  }
+  .table tbody tr, .analytics table tbody tr { transition: background 0.12s ease; }
+  .table tbody tr:hover, .analytics table tbody tr:hover { @apply bg-surface-2; }
+  .table td:last-child, .analytics table td:last-child { text-align: right; }
+
+  /* ---------- Check-in list ---------- */
+  .checkins ul { @apply list-none p-0 flex flex-col gap-2; margin-top: 1rem; }
+  .checkins li {
+    @apply flex items-center gap-3 flex-wrap bg-surface border border-line rounded-sm;
+    padding: 0.75rem 1rem;
+    animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .checkins li strong { @apply font-display; font-variant-numeric: tabular-nums; }
+  .checkins li .muted { margin-left: auto; }
+
+  /* ---------- Analytics bar list ---------- */
+  .analytics ul { @apply list-none p-0; margin-top: 0.75rem; }
+  .analytics .bar {
+    @apply flex items-baseline justify-between;
+    padding: 0.75rem 0; border-bottom: 1px solid var(--color-line);
+  }
+  .analytics .bar span { @apply font-semibold; }
+  .analytics .bar strong { @apply font-mono text-accent-strong; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Bars (TimeChart) ---------- */
+  .bars { @apply list-none p-0 flex flex-col gap-3; margin-top: 1rem; }
+  .bars li { @apply grid items-center; grid-template-columns: 130px 1fr 64px; gap: 0.75rem; }
+  .bar-label { @apply text-ink-2; font-size: 0.85rem; font-weight: 500; }
+  .bar-track { @apply bg-surface-2 border border-line rounded-pill; height: 12px; overflow: hidden; }
+  .bar-fill {
+    display: block; height: 100%; border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-strong));
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .bar-value { @apply text-right font-mono text-ink-2; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Status badges & tag pill ---------- */
+  .status-badge {
+    @apply inline-block font-bold capitalize border;
+    padding: 2px 10px; border-radius: var(--radius-pill); font-size: 0.72rem;
+  }
+  .status-pending  { background: var(--color-pending);  color: var(--color-pending-fg);  border-color: color-mix(in oklch, var(--color-pending-fg) 30%, transparent); }
+  .status-review   { background: var(--color-review);   color: var(--color-review-fg);   border-color: color-mix(in oklch, var(--color-review-fg) 30%, transparent); }
+  .status-approved { background: var(--color-approved); color: var(--color-approved-fg); border-color: color-mix(in oklch, var(--color-approved-fg) 30%, transparent); }
+  .status-rejected { background: var(--color-rejected); color: var(--color-rejected-fg); border-color: color-mix(in oklch, var(--color-rejected-fg) 30%, transparent); }
+
+  .tag-pill {
+    @apply inline-block font-mono font-medium text-ink bg-surface-2 border border-line;
+    font-size: 0.78rem; padding: 2px 9px; border-radius: var(--radius-pill);
+  }
+
+  /* ---------- Suggestions ---------- */
+  .suggestions { @apply list-none p-0 flex flex-col gap-3; margin-top: 1rem; }
+  .suggestions li { @apply flex items-start gap-3; }
+  .prio {
+    @apply font-mono font-semibold; font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 3px 8px; border-radius: 6px; margin-top: 2px;
+    white-space: nowrap;
+  }
+  .prio-high { background: var(--color-danger-bg); color: var(--color-danger-fg); }
+  .prio-medium { background: var(--color-pending); color: var(--color-pending-fg); }
+  .prio-low { background: var(--color-surface-2); color: var(--color-ink-2); }
+
+  /* ---------- Key/value (document analysis) ---------- */
+  .kv { @apply grid; grid-template-columns: 150px 1fr; gap: 0.5rem 1rem; margin-top: 1rem; }
+  .kv dt { @apply text-muted capitalize; font-size: 0.85rem; font-weight: 500; }
+  .kv dd { @apply font-medium; margin: 0; }
+
+  /* ---------- AI answer (no side-stripe) ---------- */
+  .ai-answer {
+    background: var(--color-accent-soft);
+    border: 1px solid color-mix(in oklch, var(--color-accent) 30%, var(--color-line));
+    border-radius: var(--radius-card); padding: 1rem 1.25rem;
+  }
+  .ai-answer strong { @apply font-mono text-accent-strong; letter-spacing: 0.02em; }
+
+  /* ---------- Smart tag / parse preview ---------- */
+  .smart-tag { @apply inline-flex items-center gap-2 text-accent-strong font-semibold; font-size: 0.85rem; cursor: pointer; }
+  .smart-tag input { accent-color: var(--color-accent); }
+  .parse-preview { @apply flex items-center gap-3 flex-wrap; font-size: 0.9rem; margin-top: 0.75rem; }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    @apply text-center bg-surface border border-dashed;
+    padding: 3rem 1.25rem; border-radius: var(--radius-card);
+    border-color: var(--color-line-strong);
+  }
+  .empty-state .muted { margin-top: 0.5rem; }
+
+  /* ---------- Segmented control (document status) ---------- */
+  .segmented {
+    @apply inline-flex gap-0.5 p-[3px] bg-surface-2 border border-line rounded-pill;
+  }
+  .segmented button {
+    @apply border-0 bg-transparent text-ink-2 font-semibold; font-size: 0.82rem;
+    padding: 0.5rem 1rem; border-radius: var(--radius-pill); cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .segmented button:hover { @apply text-ink; }
+  .segmented button.active { @apply bg-accent text-accent-ink shadow-soft; }
+
+  /* ---------- Pagination ---------- */
+  .pager { @apply flex items-center gap-4 mt-5 justify-center; }
+  .pager span { @apply font-mono text-muted; font-size: 0.8rem; }
+
+  /* ---------- Forms ---------- */
+  .checkin-form label, .upload-form label, .edit-checkin label {
+    @apply block font-semibold mb-3;
+  }
+  .filter {
+    @apply w-full bg-surface border border-line rounded-sm text-ink;
+    padding: 0.75rem 1rem; margin: 1rem 0; font: inherit;
+  }
+  .filter::placeholder { @apply text-muted; }
+  .edit-checkin { @apply flex items-center gap-2 flex-wrap mb-2; }
+  .edit-checkin input { flex: 1 1 120px; }
+
+  input, select, textarea {
+    @apply bg-surface border border-line rounded-sm text-ink;
+    font: inherit; padding: 0.75rem 1rem;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input::placeholder, textarea::placeholder { @apply text-muted; }
+  input:focus, select:focus, textarea:focus, .filter:focus {
+    outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft);
+  }
+  input[type="file"] { @apply text-[0.85rem]; padding: 0.5rem 0.75rem; }
+
+  /* ---------- Buttons ---------- */
+  button {
+    @apply font-semibold cursor-pointer bg-surface text-ink border border-line rounded-sm;
+    font: inherit; padding: 0.75rem 1rem;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  button:hover:not(:disabled) { @apply border-line-strong shadow-soft; }
+  button:active:not(:disabled) { transform: translateY(1px); }
+  button:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--color-accent-soft); border-color: var(--color-accent); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button[type="submit"] {
+    @apply bg-accent text-accent-ink border-transparent shadow-soft;
+  }
+  button[type="submit"]:hover:not(:disabled) { @apply bg-accent-strong text-accent-ink; }
+
+  /* ---------- Errors ---------- */
+  .error { @apply text-danger-fg font-medium; margin: 0.75rem 0; }
+  .error-text { @apply text-danger-fg; font-size: 0.85rem; margin-top: 0.5rem; }
+  .error-banner {
+    background: var(--color-danger-bg); color: var(--color-danger-fg);
+    padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;
+    border: 1px solid color-mix(in oklch, var(--color-danger) 25%, var(--color-line));
+    @apply font-medium;
+  }
+
+  /* ---------- Recent (compatibility) ---------- */
+  .recent ul { @apply list-none p-0; }
+  .recent li { padding: 0.75rem 0; border-bottom: 1px solid var(--color-line); }
+
+  /* ---------- Motion ---------- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .cards-grid > * { animation: rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .cards-grid > *:nth-child(2) { animation-delay: 0.05s; }
+  .cards-grid > *:nth-child(3) { animation-delay: 0.1s; }
+  .cards-grid > *:nth-child(4) { animation-delay: 0.15s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 760px) {
+    .topbar { @apply flex-col items-start gap-3 h-auto py-3 px-4; }
+    .topbar nav { @apply w-full; margin-left: 0; }
+    .content { @apply px-4 py-5; padding-top: 1.25rem; }
+    .bars li { grid-template-columns: 90px 1fr 52px; }
+    .kv { grid-template-columns: 110px 1fr; }
+    .checkins li .muted { margin-left: 0; width: 100%; }
+  }
+
+  /* ---------- Accessibility ---------- */
+  html { color-scheme: light dark; }
+  :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 4px; }
+  .topbar nav a:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .skip-link {
+    position: absolute; left: 0.75rem; top: -4rem; z-index: 50;
+    @apply bg-accent text-accent-ink font-semibold rounded-sm px-3 py-2 shadow-soft;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus { top: 0.75rem; text-decoration: none; }
+
+  /* ---------- Theme toggle ---------- */
+  .theme-toggle {
+    @apply inline-flex items-center justify-center p-2 rounded-sm text-ink-2;
+    border: 1px solid transparent; margin-left: 0.5rem;
+  }
+  .theme-toggle:hover { @apply text-ink bg-surface-2; border-color: var(--color-line); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .theme-toggle svg { width: 1.15rem; height: 1.15rem; display: block; }
+}

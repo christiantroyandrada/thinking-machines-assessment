@@ -1,0 +1,17 @@
+{
+  "name": "worksmart",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "migrate": "npm --prefix server run db:migrate",
+    "seed": "npm --prefix server run db:seed",
+    "test": "npm --prefix server test && npm --prefix client test",
+    "test:e2e": "playwright test",
+    "build": "npm --prefix client run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

@@ -1,0 +1,18 @@
+services:
+  server:
+    build: ./server
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=file:/app/prisma/dev.db
+    volumes:
+      - ./server/prisma:/app/prisma
+  client:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:4000
+    ports:
+      - "8080:80"
+    depends_on:
+      - server

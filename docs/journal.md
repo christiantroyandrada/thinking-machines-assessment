@@ -27,7 +27,7 @@ Thought process, assumptions, and decisions recorded during the engagement.
 - Departments are a seeded string list; documents are typed PO, QUOTE, REQ, or OTHER.
 - Check-in tags normalized to lowercase; a missing tag goes to general (eligible for smart categorization).
 - Uploaded text files are read as UTF-8 for mock analysis; binary files fall back to filename or title.
-- Seed: 132 users (Procurement is the majority) and 2,600+ check-ins, plus 9 documents. This clears the 100+ users and 1,000+ entries requirements.
+- Seed: 100 users (Procurement is the majority) and 2,000+ check-ins, plus 9 documents. This clears the 100+ users and 1,000+ entries requirements.
 
 ## Entry 5 — Blockers encountered and how they were handled
 

@@ -42,7 +42,7 @@ Core time tracking
 - View and paginate 1,000+ check-ins
 - Group and chart by tag, date, department, or user
 - Edit and delete check-ins
-- Multi-user support (132 users seeded)
+- Multi-user support (100 users seeded)
 - Light and dark theme (class-based toggle, persists choice, respects prefers-color-scheme) with accessibility (focus-visible rings, skip-to-content link, aria labels, reduced-motion safe). Built with Tailwind CSS v4.
 
 Document management
@@ -117,7 +117,7 @@ npm --prefix client install
 cp server/.env.example server/.env   # DATABASE_URL defaults to local SQLite
 
 npm run migrate     # npx prisma db push
-npm run seed        # 132 users and 2,600+ check-ins, 9 documents
+npm run seed        # 100 users and 2,000+ check-ins, 9 documents
 ```
 
 Run locally
@@ -162,7 +162,7 @@ This submission's planning, code scaffolding, and documentation were assisted by
 - Departments. Seeded string list (Procurement, Engineering, Finance, Operations, Sales, HR) until an admin-managed org structure is scoped.
 - Check-in tags. Free-form strings normalized to lowercase. Missing tags default to general and are eligible for Smart Categorization.
 - Document text. Uploaded files are read as UTF-8 text for mock analysis. Binary files fall back to filename or title based extraction.
-- Data volume. Seeded with 132 users and 2,600+ check-ins. This clears the 100+ users and 1,000+ entries bar out of the box.
+- Data volume. Seeded with 100 users and 2,000+ check-ins. This clears the 100+ users and 1,000+ entries bar out of the box.
 - GenAI. All six GenAI features are deterministic mocks behind server/src/services/genai.js, built to be swapped for a real LLM later.
 
 Full rationale is in docs/architecture.md and docs/journal.md.

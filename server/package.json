@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:migrate": "prisma migrate dev --name init",
+    "db:migrate": "prisma db push",
     "db:seed": "node prisma/seed.js"
   },
   "dependencies": {

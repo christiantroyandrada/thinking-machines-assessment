@@ -3,12 +3,12 @@ import { PrismaClient } from '@prisma/client';
 const db = new PrismaClient();
 
 const DEPARTMENTS = {
-  procurement: 70,
-  engineering: 20,
+  procurement: 40,
+  engineering: 18,
   finance: 10,
-  operations: 15,
+  operations: 12,
   sales: 10,
-  hr: 5,
+  hr: 8,
 };
 
 const ACTIVITIES = {
@@ -69,7 +69,7 @@ async function main() {
 
   const checkIns = [];
   for (const user of dbUsers) {
-    const n = rand(10, 30);
+    const n = rand(12, 30);
     const deptKey = user.department.toLowerCase();
     for (let i = 0; i < n; i++) {
       const tag = pick(['procurement', 'project-x', 'design', 'meeting', 'finance', 'ops', 'support']);
@@ -80,6 +80,7 @@ async function main() {
         date: isoDaysAgo(rand(0, 59)),
         tag,
         activities: pick(ACTIVITIES[deptKey] || ACTIVITIES.procurement),
+        updatedAt: new Date(),
       });
     }
   }
@@ -96,6 +97,7 @@ async function main() {
         sizeBytes: rand(800, 4000),
         contentText: `${title}\nVendor: ${pick(['Acme Industrial', 'Global Parts Co', 'SteelWorks PH', 'Apex Hydraulics'])}\nAmount: PHP ${rand(50000, 900000)}\nTotal: ${rand(50000, 900000)}`,
         status: pick(['pending', 'in-review', 'approved', 'rejected']),
+        updatedAt: new Date(),
       });
     }
   }

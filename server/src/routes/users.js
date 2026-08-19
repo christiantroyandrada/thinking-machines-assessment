@@ -13,7 +13,7 @@ router.get('/me', asyncHandler(async (req, res) => {
 router.get('/', asyncHandler(async (req, res) => {
   const where = {};
   if (req.query.department) where.department = req.query.department;
-  const users = await db.user.findMany({ where, orderBy: { name: 'asc' }, select: { id: true, name: true, department: true, role: true, email: true } });
+  const users = await db.user.findMany({ where, orderBy: [{ role: 'asc' }, { name: 'asc' }], select: { id: true, name: true, department: true, role: true, email: true } });
   res.json({ users });
 }));
 

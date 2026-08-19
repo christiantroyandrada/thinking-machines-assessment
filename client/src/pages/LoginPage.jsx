@@ -16,6 +16,10 @@ export default function LoginPage() {
 
   if (loading) return <div className="card">Loading users…</div>;
 
+  const admins = users.filter((u) => u.role === 'admin');
+  const staff = users.filter((u) => u.role !== 'admin');
+  const demo = [...admins.slice(0, 2), ...staff.slice(0, 6)];
+
   return (
     <div className="login">
       <div className="card login-card">
@@ -23,7 +27,7 @@ export default function LoginPage() {
         <p>Choose your identity to continue (mock sign-in).</p>
         {error && <p className="error-text">{error}</p>}
         <div className="user-list">
-          {users.slice(0, 8).map((u) => (
+          {demo.map((u) => (
             <button key={u.id} className="user-row" onClick={() => choose(u)}>
               <span>{u.name}</span>
               <span className="muted">{u.department} · {u.role}</span>

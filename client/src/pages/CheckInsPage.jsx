@@ -1,85 +1,71 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import * as api from '../api.js';
+import { useAsync } from '../hooks/useAsync.js';
 import CheckInForm from '../components/CheckInForm.jsx';
-import TagPill from '../components/TagPill.jsx';
+import CheckInTable from '../components/CheckInTable.jsx';
+import EditCheckInModal from '../components/EditCheckInModal.jsx';
+import Pagination from '../components/Pagination.jsx';
+import { useAppStore } from '../store/useAppStore.js';
+
+const PAGE_SIZE = 25;
 
 export default function CheckInsPage() {
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [tag, setTag] = useState('');
-  const [error, setError] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [editHours, setEditHours] = useState('');
-  const [editTag, setEditTag] = useState('');
-  const [editActivities, setEditActivities] = useState('');
+  const [department, setDepartment] = useState('');
+  const [userId, setUserId] = useState('');
+  const [editing, setEditing] = useState(null);
 
-  const load = useCallback(async () => {
-    try {
-      const res = await api.listCheckIns({ page, pageSize: 25, tag: tag || undefined });
-      setItems(res.items);
-      setTotal(res.total);
-    } catch (e) { setError(e.message); }
-  }, [page, tag]);
+  const users = useAppStore((s) => s.users);
+  const setUsers = useAppStore((s) => s.setUsers);
 
-  useEffect(() => { load(); }, [load]);
+  const { data, error, loading, run, setError } = useAsync(
+    () => api.listCheckIns({ page, pageSize: PAGE_SIZE, tag: tag || undefined, department: department || undefined, userId: userId || undefined }),
+    [page, tag, department, userId],
+  );
+
+  const items = data?.items || [];
+  const total = data?.total || 0;
+
+  useEffect(() => {
+    if (!users.length) api.getUsers().then((d) => setUsers(d.users)).catch(() => {});
+  }, [users.length]);
+
+  const departments = useMemo(() => [...new Set(users.map((u) => u.department))].sort(), [users]);
 
   async function handleDelete(c) {
+    if (!window.confirm(`Delete this check-in (${c.hours} hrs)?`)) return;
     try {
       await api.deleteCheckIn(c.id);
-      await load();
-    } catch (e) { setError(e.message); }
-  }
-
-  function startEdit(c) {
-    setEditingId(c.id);
-    setEditHours(String(c.hours));
-    setEditTag(c.tag || '');
-    setEditActivities(c.activities || '');
-  }
-
-  async function handleEditSave(c) {
-    try {
-      await api.updateCheckIn(c.id, { hours: Number(editHours), tag: editTag || 'general', activities: editActivities });
-      setEditingId(null);
-      await load();
-    } catch (e) { setError(e.message); }
+      await run();
+    } catch (e) {
+      setError(e.message);
+    }
   }
 
   return (
-    <section className="checkins">
+    <section className="checkins stack">
       <h2>Check-ins</h2>
-      {error && <div className="error">{error}</div>}
-      <CheckInForm onCreated={() => { setPage(1); load(); }} />
-      <input className="filter" value={tag} onChange={(e) => setTag(e.target.value)} placeholder="filter by tag" aria-label="tag filter" />
-      <ul>
-        {items.map((c) => (
-          <li key={c.id}>
-            {editingId === c.id ? (
-              <form className="edit-checkin" onSubmit={(e) => { e.preventDefault(); handleEditSave(c); }}>
-                <input type="number" step="0.1" value={editHours} onChange={(e) => setEditHours(e.target.value)} aria-label="edit hours" />
-                <input value={editTag} onChange={(e) => setEditTag(e.target.value)} aria-label="edit tag" />
-                <input value={editActivities} onChange={(e) => setEditActivities(e.target.value)} aria-label="edit activities" />
-                <button type="submit">Save</button>
-                <button type="button" onClick={() => setEditingId(null)}>Cancel</button>
-              </form>
-            ) : (
-              <>
-                <strong>{c.hours}h</strong> <TagPill tag={c.tag} /> · {c.activities} — {c.userName} ({c.department})
-                <div className="checkin-actions">
-                  <button type="button" className="btn-ghost" onClick={() => startEdit(c)}>Edit</button>
-                  <button type="button" className="btn-danger" onClick={() => handleDelete(c)}>Delete</button>
-                </div>
-              </>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div className="pager">
-        <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>Prev</button>
-        <span>Page {page} / {Math.max(1, Math.ceil(total / 25))}</span>
-        <button disabled={page * 25 >= total} onClick={() => setPage((p) => p + 1)}>Next</button>
+      {error && <div className="error-banner">{error}</div>}
+      <CheckInForm onCreated={() => { setPage(1); run(); }} />
+      <div className="card filter-bar">
+        <input aria-label="filter by tag" placeholder="Tag (e.g. procurement)" value={tag} onChange={(e) => { setTag(e.target.value); setPage(1); }} />
+        <select aria-label="filter by department" value={department} onChange={(e) => { setDepartment(e.target.value); setPage(1); }}>
+          <option value="">All departments</option>
+          {departments.map((d) => <option key={d}>{d}</option>)}
+        </select>
+        <select aria-label="filter by user" value={userId} onChange={(e) => { setUserId(e.target.value); setPage(1); }}>
+          <option value="">All users</option>
+          {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+        </select>
       </div>
+      <div className="card">
+        {loading ? <p className="muted">Loading…</p> : <CheckInTable items={items} onEdit={setEditing} onDelete={handleDelete} />}
+        <Pagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
+      </div>
+      {editing && (
+        <EditCheckInModal checkIn={editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); run(); }} />
+      )}
     </section>
   );
 }

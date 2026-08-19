@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import DocumentsPage from './DocumentsPage';
 
 vi.mock('../api.js', () => ({
-  listDocuments: vi.fn(async () => ({ documents: [{ id: 1, title: 'Purchase Order', type: 'PO', status: 'pending', totalTimeSpent: 5, linkedCheckIns: 2 }] })),
+  listDocuments: vi.fn(async () => ({ items: [{ id: 1, title: 'Purchase Order', type: 'PO', status: 'pending', totalTimeSpent: 5, checkInCount: 2 }], total: 1, page: 1, pageSize: 25 })),
   uploadDocument: vi.fn(async () => ({ id: 2, type: 'QUOTE', title: 'Quote' })),
 }));
 

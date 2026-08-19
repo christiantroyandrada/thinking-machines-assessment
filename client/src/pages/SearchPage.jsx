@@ -1,25 +1,15 @@
 import { useState } from 'react';
 import { searchAI } from '../api.js';
+import { useAsync } from '../hooks/useAsync.js';
 
 export default function SearchPage() {
   const [q, setQ] = useState('');
-  const [result, setResult] = useState(null);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const { data: result, error, loading: busy, run } = useAsync(() => searchAI(q), [q], { immediate: false });
 
   async function ask(e) {
     e.preventDefault();
-    if (!q.trim()) return;
-    setBusy(true);
-    setError('');
-    try {
-      const d = await searchAI(q);
-      setResult(d);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setBusy(false);
-    }
+    if (!q.trim() || busy) return;
+    await run();
   }
 
   return (

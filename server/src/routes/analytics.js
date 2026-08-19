@@ -1,38 +1,43 @@
 import { Router } from 'express';
 import { db } from '../db.js';
-import { aggregateBy } from '../services/analytics.js';
+import { aggregateBy, aggregateByDepartment } from '../services/analytics.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
+const DIMENSIONS = new Set(['tag', 'date', 'department', 'user']);
 
 router.get('/time', asyncHandler(async (req, res) => {
-  const dimension = req.query.dimension || 'tag';
+  const dimension = req.query.dimension;
+  if (!DIMENSIONS.has(dimension)) {
+    return res.status(400).json({ error: `dimension must be one of ${[...DIMENSIONS].join(', ')}` });
+  }
   const checkIns = await db.checkIn.findMany({ include: { user: true } });
-  res.json(aggregateBy(checkIns, dimension));
+  const series = aggregateBy(checkIns, dimension);
+  const totalHours = Number(series.reduce((sum, e) => sum + e.hours, 0).toFixed(2));
+  res.json({ totalHours, series });
 }));
 
 router.get('/time/departments', asyncHandler(async (req, res) => {
-  const users = await db.user.findMany({ include: { checkIns: { select: { hours: true, tag: true } } } });
-  const byDept = {};
-  for (const u of users) {
-    byDept[u.department] = byDept[u.department] || { department: u.department, totalHours: 0, users: 0 };
-    byDept[u.department].totalHours += u.checkIns.reduce((s, c) => s + c.hours, 0);
-    byDept[u.department].users += 1;
-  }
-  const result = Object.values(byDept)
-    .map((d) => ({ ...d, totalHours: Number(d.totalHours.toFixed(2)), avgHoursPerUser: Number((d.totalHours / Math.max(1, d.users)).toFixed(2)) }))
-    .sort((a, b) => b.totalHours - a.totalHours);
-  res.json({ departments: result });
+  const [users, checkins] = await Promise.all([
+    db.user.findMany(),
+    db.checkIn.findMany({ include: { user: true } }),
+  ]);
+  const departments = aggregateByDepartment(users, checkins).map((d) => ({
+    department: d.department,
+    totalHours: Number(d.hours.toFixed(2)),
+    users: d.users,
+    avgHoursPerUser: Number((d.hours / Math.max(1, d.users)).toFixed(2)),
+  }));
+  res.json({ departments });
 }));
 
 router.get('/documents', asyncHandler(async (req, res) => {
-  const docs = await db.document.findMany({
-    include: { _count: { select: { checkIns: true } }, checkIns: { select: { hours: true } } },
-  });
-  const result = docs
-    .map((d) => ({ id: d.id, title: d.title, type: d.type, status: d.status, linkedCheckIns: d._count.checkIns, linkedHours: Number(d.checkIns.reduce((s, c) => s + c.hours, 0).toFixed(2)) }))
-    .sort((a, b) => b.linkedHours - a.linkedHours);
-  res.json({ documents: result });
+  const documents = await db.document.findMany();
+  const byStatus = documents.reduce((acc, d) => {
+    acc[d.status] = (acc[d.status] || 0) + 1;
+    return acc;
+  }, {});
+  res.json({ totalDocuments: documents.length, byStatus });
 }));
 
 export default router;

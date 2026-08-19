@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    window.localStorage.setItem('worksmart-user', JSON.stringify({ id: 1, name: 'James Wong', role: 'admin', department: 'Engineering' }));
+    window.localStorage.setItem('worksmart-user-id', '1');
+  });
+});
+
 test('dashboard shows insights and stat cards', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Welcome back/i })).toBeVisible();
@@ -9,10 +16,14 @@ test('dashboard shows insights and stat cards', async ({ page }) => {
 
 test('check-ins list renders seeded data (1000+)', async ({ page }) => {
   await page.goto('/check-ins');
-  await page.waitForSelector('section.checkins ul li');
-  const items = page.locator('section.checkins ul li');
-  await expect(items.first()).toBeVisible();
-  await expect(items).not.toHaveCount(0);
+  await page.waitForSelector('section.checkins table tbody tr');
+  const rows = page.locator('section.checkins table tbody tr');
+  await expect(rows.first()).toBeVisible();
+  await expect(rows).not.toHaveCount(0);
+  await expect(page.locator('.pager')).toContainText(/Page 1 of \d+/);
+  const pagerText = await page.locator('.pager').textContent();
+  const total = Number(pagerText.match(/Page 1 of (\d+)/)?.[1] || 0);
+  expect(total * 25).toBeGreaterThanOrEqual(1000);
 });
 
 test('analytics page renders dimension sections', async ({ page }) => {

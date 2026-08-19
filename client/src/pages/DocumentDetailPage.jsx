@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDocument, updateDocument, createCheckIn } from '../api.js';
+import { useAsync } from '../hooks/useAsync.js';
 import StatusBadge from '../components/StatusBadge';
 import AnalysisCard from '../components/AnalysisCard';
 import SuggestionList from '../components/SuggestionList';
@@ -9,20 +10,15 @@ const STATUSES = ['pending', 'in-review', 'approved', 'rejected'];
 
 export default function DocumentDetailPage() {
   const { id } = useParams();
-  const [doc, setDoc] = useState(null);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
 
-  const load = useCallback(async () => {
-    setDoc(await getDocument(id));
-  }, [id]);
-
-  useEffect(() => { load(); }, [load]);
+  const { data: doc, error: loadError, run } = useAsync(() => getDocument(id), [id]);
 
   async function setStatus(status) {
     await updateDocument(id, { status });
-    await load();
+    await run();
   }
 
   async function logTime(e) {
@@ -32,7 +28,7 @@ export default function DocumentDetailPage() {
     try {
       await createCheckIn({ text, documentId: Number(id) });
       setText('');
-      await load();
+      await run();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -40,13 +36,13 @@ export default function DocumentDetailPage() {
     }
   }
 
-  if (!doc) return <p className="muted">Loading…</p>;
+  if (!doc) return loadError ? <p className="error-text">{loadError}</p> : <p className="muted">Loading…</p>;
 
   return (
     <div className="stack">
       <h1>{doc.title}</h1>
       <div className="card">
-        <div className="row" style={{ justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+        <div className="row-between">
           <div>
             <StatusBadge status={doc.status} />
             <span className="muted"> · {doc.type} · {doc.filename}</span>

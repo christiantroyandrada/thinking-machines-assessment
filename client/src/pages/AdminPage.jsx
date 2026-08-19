@@ -1,13 +1,8 @@
-import { useEffect, useState } from 'react';
 import { getAdminAnalytics } from '../api.js';
+import { useAsync } from '../hooks/useAsync.js';
 
 export default function AdminPage() {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    getAdminAnalytics().then(setData).catch((e) => setError(e.message));
-  }, []);
+  const { data, error } = useAsync(() => getAdminAnalytics(), []);
 
   if (error) return <div className="card"><p className="error-text">{error}</p></div>;
   if (!data) return <p className="muted">Loading…</p>;

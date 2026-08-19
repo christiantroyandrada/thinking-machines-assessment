@@ -14,14 +14,40 @@ function initialTheme() {
   return 'light';
 }
 
-const DEFAULT_USER = { id: 1, name: 'James Wong', department: 'Procurement', role: 'admin' };
+function storedUser() {
+  try {
+    const raw = localStorage.getItem('worksmart-user');
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
 export const useAppStore = create((set, get) => ({
   theme: initialTheme(),
-  currentUser: DEFAULT_USER,
+  currentUser: storedUser(),
+  users: [],
   setTheme: (theme) => set({ theme }),
   toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
-  setCurrentUser: (user) => set({ currentUser: user }),
+  setUsers: (users) => set({ users }),
+  setCurrentUser: (user) => {
+    if (user) {
+      try {
+        localStorage.setItem('worksmart-user', JSON.stringify(user));
+        localStorage.setItem('worksmart-user-id', String(user.id));
+      } catch {
+        /* ignore */
+      }
+    } else {
+      try {
+        localStorage.removeItem('worksmart-user');
+        localStorage.removeItem('worksmart-user-id');
+      } catch {
+        /* ignore */
+      }
+    }
+    set({ currentUser: user });
+  },
 }));
 
 // Side effects live outside the store: keep state pure, sync DOM + persistence here.

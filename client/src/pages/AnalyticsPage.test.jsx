@@ -1,21 +1,15 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
-import AnalyticsPage from './AnalyticsPage.jsx';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen, waitFor } from '@testing-library/react';
+import AnalyticsPage from './AnalyticsPage';
 
-beforeEach(() => {
-  window.fetch = vi.fn(async (url) => {
-    if (url.includes('/api/analytics/time')) return { ok: true, json: async () => ({ series: [{ key: 'dev', hours: 8 }] }) };
-    if (url.includes('/api/analytics/time/departments')) return { ok: true, json: async () => ({ departments: [{ department: 'Engineering', totalHours: 10, avgHoursPerUser: 5 }] }) };
-    if (url.includes('/api/analytics/documents')) return { ok: true, json: async () => ({ documents: [{ id: 1, title: 'PO-1', linkedHours: 3, linkedCheckIns: 2 }] }) };
-    return { ok: true, json: async () => ({}) };
-  });
-});
-afterEach(() => vi.restoreAllMocks());
+vi.mock('../api.js', () => ({
+  getTimeAnalytics: vi.fn(async (dimension) => ({ totalHours: 7, series: [{ key: 'procurement', hours: 6, count: 2 }] })),
+}));
 
 describe('AnalyticsPage', () => {
-  it('renders analytics sections', async () => {
+  it('shows total hours and series', async () => {
     render(<AnalyticsPage />);
-    expect(await screen.findByText('Analytics')).toBeTruthy();
-    expect(await screen.findAllByText(/dev|Engineering|PO-1/i)).toBeTruthy();
+    await waitFor(() => expect(screen.getByText(/7.0 hrs/)).toBeInTheDocument());
+    expect(screen.getByText('By department')).toBeInTheDocument();
   });
 });

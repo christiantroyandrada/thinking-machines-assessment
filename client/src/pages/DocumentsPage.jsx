@@ -1,36 +1,30 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { listDocuments } from '../api.js';
+import { useAsync } from '../hooks/useAsync.js';
 import UploadForm from '../components/UploadForm';
 import DocumentTable from '../components/DocumentTable';
 import Pagination from '../components/Pagination';
 
+const PAGE_SIZE = 25;
+
 export default function DocumentsPage() {
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('');
   const [type, setType] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const data = await listDocuments({ page, pageSize: 25, status: status || undefined, type: type || undefined });
-      setItems(data.documents);
-      setTotal(data.documents.length);
-    } catch (e) { setError(e.message); }
-    finally { setLoading(false); }
-  }, [page, status, type]);
+  const { data, error, loading, run } = useAsync(
+    () => listDocuments({ page, pageSize: PAGE_SIZE, status: status || undefined, type: type || undefined }),
+    [page, status, type],
+  );
 
-  useEffect(() => { load(); }, [load]);
+  const items = data?.items || [];
+  const total = data?.total || 0;
 
   return (
     <div className="stack">
       <h1>Documents</h1>
       {error && <div className="error-banner">{error}</div>}
-      <UploadForm onUploaded={() => { setPage(1); load(); }} />
+      <UploadForm onUploaded={() => { setPage(1); run(); }} />
       <div className="filter-bar">
         <span className="filter-label">Filters</span>
         <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
@@ -44,7 +38,7 @@ export default function DocumentsPage() {
       </div>
       <div className="card">
         {loading ? <p className="muted">Loading…</p> : <DocumentTable items={items} />}
-        <Pagination page={page} pageSize={25} total={total} onChange={setPage} />
+        <Pagination page={page} pageSize={PAGE_SIZE} total={total} onChange={setPage} />
       </div>
     </div>
   );

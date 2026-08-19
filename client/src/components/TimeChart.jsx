@@ -1,15 +1,30 @@
-export default function TimeChart({ series }) {
-  const max = Math.max(1, ...(series || []).map((s) => s.hours || 0));
-  if (!series || !series.length) return <p className="muted">No data yet.</p>;
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+
+export default function TimeChart({ dimension, series }) {
+  const data = (series || []).map((s) => ({ name: String(s.key).slice(0, 18), hours: s.hours }));
+  if (!data.length) return <p className="muted">No data yet.</p>;
+  if (dimension === 'date') {
+    return (
+      <ResponsiveContainer width="100%" height={320}>
+        <LineChart data={data}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="hours" stroke="#2b4a6f" />
+        </LineChart>
+      </ResponsiveContainer>
+    );
+  }
   return (
-    <ul className="bars">
-      {series.map((s) => (
-        <li key={s.key}>
-          <span className="bar-label">{s.key}</span>
-          <span className="bar-track"><span className="bar-fill" style={{ width: `${((s.hours || 0) / max) * 100}%` }} /></span>
-          <span className="bar-value">{s.hours} hr</span>
-        </li>
-      ))}
-    </ul>
+    <ResponsiveContainer width="100%" height={320}>
+      <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Bar dataKey="hours" fill="#2b4a6f" />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }

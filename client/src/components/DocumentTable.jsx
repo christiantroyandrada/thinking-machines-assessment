@@ -14,7 +14,7 @@ export default function DocumentTable({ items }) {
             <td>{d.type}</td>
             <td><StatusBadge status={d.status} /></td>
             <td>{(d.totalTimeSpent ?? 0).toFixed(1)} hr</td>
-            <td>{d.linkedCheckIns ?? 0}</td>
+            <td>{d.checkInCount ?? 0}</td>
             <td><Link to={`/documents/${d.id}`}>Open</Link></td>
           </tr>
         ))}

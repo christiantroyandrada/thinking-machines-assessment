@@ -142,15 +142,15 @@ Partial update. Body fields (all optional): `hours` (positive number), `tag`, `a
 Deletes the check-in. Returns `204 No Content`. `404` if not found.
 
 ### GET `/api/analytics/time?dimension=tag|date|department|user`
-Aggregates logged hours. Default dimension is `tag`. Each `series` entry has `key` (the dimension value) and `hours` (number). `total` is the sum.
+Aggregates logged hours. Default dimension is `tag`. Unknown dimensions return `400`. Each `series` entry has `key` (the dimension value), `hours` (summed) and `count`. `totalHours` is the sum.
 
 ```json
 {
+  "totalHours": 29.5,
   "series": [
-    { "key": "procurement", "hours": 21.5 },
-    { "key": "meeting", "hours": 8 }
-  ],
-  "total": 29.5
+    { "key": "procurement", "hours": 21.5, "count": 3 },
+    { "key": "meeting", "hours": 8, "count": 2 }
+  ]
 }
 ```
 
@@ -166,18 +166,17 @@ Per-department breakdown.
 ```
 
 ### GET `/api/analytics/documents`
-Document aggregates. `linkedCheckIns` is the count of linked check-ins; `linkedHours` is summed hours.
+Document status counts.
 
 ```json
 {
-  "documents": [
-    { "id": 3, "title": "PO-4471", "type": "PO", "status": "approved", "linkedCheckIns": 5, "linkedHours": 12.5 }
-  ]
+  "totalDocuments": 9,
+  "byStatus": { "pending": 3, "approved": 2, "in-review": 2, "rejected": 2 }
 }
 ```
 
 ### POST `/api/documents` (multipart/form-data)
-Upload a document. Fields: `file` (binary, max 5 MB), `title` (optional, defaults to filename), `type` (required, one of `PO`, `QUOTE`, `REQ`).
+Upload a document. Fields: `file` (binary, max 5 MB, required), `title` (optional, defaults to filename), `type` (optional, defaults to `OTHER`, one of `PO`, `QUOTE`, `REQ`, `OTHER`).
 
 Returns the created document record (including `id`, `title`, `type`, `status`, `mimeType`, `sizeBytes`, `contentText`, `createdAt`, `updatedAt`).
 
@@ -191,19 +190,20 @@ Returns the created document record (including `id`, `title`, `type`, `status`, 
 ```
 
 ### GET `/api/documents`
-List/filter documents. Optional `?type=` and `?status=` filters. Each item is the full document plus `linkedCheckIns` (count) and `totalTimeSpent` (summed hours of linked check-ins).
+List/filter documents, paginated. Optional `?q=` (search title), `?status=` and `?type=` filters. Each item is the full document plus `checkInCount` (count of linked check-ins) and `totalTimeSpent` (summed hours of linked check-ins).
 
 ```json
 {
-  "documents": [
+  "items": [
     {
       "id": 3, "title": "PO-4471", "type": "PO", "status": "approved",
       "filename": "po-4471.txt", "mimeType": "text/plain", "sizeBytes": 1024,
       "contentText": "vendor Acme total 1500.00 ...", "analysis": null,
       "createdAt": "2026-08-18T10:00:00.000Z", "updatedAt": "2026-08-18T10:00:00.000Z",
-      "linkedCheckIns": 5, "totalTimeSpent": 12.5
+      "checkInCount": 5, "totalTimeSpent": 12.5
     }
-  ]
+  ],
+  "total": 1, "page": 1, "pageSize": 25
 }
 ```
 

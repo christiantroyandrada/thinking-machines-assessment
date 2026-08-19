@@ -16,25 +16,54 @@ afterAll(async () => {
 });
 
 describe('documents', () => {
-  it('lists documents', async () => {
-    const res = await request(app).get('/api/documents');
-    expect(res.status).toBe(200);
-    expect(Array.isArray(res.body.documents)).toBe(true);
-  });
-
-  it('creates a document', async () => {
-    const res = await request(app).post('/api/documents').send({ title: 'PO-100', type: 'PO', status: 'pending', contentText: 'Vendor Acme amount 5000' });
+  it('uploads a text document and extracts analysis text', async () => {
+    const res = await request(app)
+      .post('/api/documents')
+      .field('type', 'PO')
+      .attach('file', Buffer.from('Purchase Order PO-1001\nVendor: Acme Industrial\nTotal: PHP 500000'), 'po.txt');
     expect(res.status).toBe(201);
     expect(res.body.type).toBe('PO');
+    expect(res.body.status).toBe('pending');
+    expect(res.body.contentText).toContain('PO-1001');
   });
 
-  it('rejects invalid document type', async () => {
-    const res = await request(app).post('/api/documents').send({ title: 'X', type: 'BAD' });
+  it('lists documents with time spent aggregated', async () => {
+    const res = await request(app).get('/api/documents');
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBeGreaterThanOrEqual(1);
+    expect(res.body.items[0]).toHaveProperty('totalTimeSpent');
+    expect(res.body.items[0]).toHaveProperty('checkInCount');
+  });
+
+  it('filters by status', async () => {
+    const created = await request(app).post('/api/documents').field('type', 'PO').attach('file', Buffer.from('PO'), 'approved.txt');
+    await request(app).patch(`/api/documents/${created.body.id}`).send({ status: 'approved' });
+    const res = await request(app).get('/api/documents?status=approved');
+    expect(res.body.items.every((d) => d.status === 'approved')).toBe(true);
+  });
+
+  it('gets a document detail with check-ins', async () => {
+    const created = await request(app).post('/api/documents').field('type', 'QUOTE').attach('file', Buffer.from('Quote 123'), 'q.txt');
+    const res = await request(app).get(`/api/documents/${created.body.id}`);
+    expect(res.status).toBe(200);
+    expect(res.body.checkIns).toEqual([]);
+    expect(res.body.totalTimeSpent).toBe(0);
+  });
+
+  it('updates document status', async () => {
+    const created = await request(app).post('/api/documents').field('type', 'REQ').attach('file', Buffer.from('Req'), 'r.txt');
+    const res = await request(app).patch(`/api/documents/${created.body.id}`).send({ status: 'in-review' });
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe('in-review');
+  });
+
+  it('rejects missing file', async () => {
+    const res = await request(app).post('/api/documents').field('type', 'PO');
     expect(res.status).toBe(400);
   });
 
   it('deletes a document', async () => {
-    const created = await request(app).post('/api/documents').send({ title: 'PO-200', type: 'PO' });
+    const created = await request(app).post('/api/documents').field('type', 'PO').attach('file', Buffer.from('X'), 'x.txt');
     const res = await request(app).delete(`/api/documents/${created.body.id}`);
     expect(res.status).toBe(204);
   });

@@ -1,8 +1,19 @@
 const BASE = import.meta.env.VITE_API_URL || '';
-let apiUserId = 1;
+
+function getUserId() {
+  try {
+    return localStorage.getItem('worksmart-user-id') || '1';
+  } catch {
+    return '1';
+  }
+}
 
 export function setApiUser(id) {
-  apiUserId = Number(id) || 1;
+  try {
+    localStorage.setItem('worksmart-user-id', String(id));
+  } catch {
+    /* ignore */
+  }
 }
 
 function buildQuery(params = {}) {
@@ -14,7 +25,7 @@ function buildQuery(params = {}) {
 }
 
 async function request(url, options = {}) {
-  const headers = { 'x-user-id': String(apiUserId) };
+  const headers = { 'x-user-id': getUserId() };
   if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
   const res = await fetch(`${BASE}${url}`, {
     ...options,
@@ -53,7 +64,7 @@ export async function deleteCheckIn(id) {
 }
 
 export async function listDocuments(params = {}) {
-  const qs = buildQuery({ page: params.page, pageSize: params.pageSize, status: params.status, type: params.type });
+  const qs = buildQuery({ page: params.page, pageSize: params.pageSize, status: params.status, type: params.type, q: params.q });
   return request(`/api/documents${qs ? `?${qs}` : ''}`);
 }
 
@@ -71,6 +82,10 @@ export async function updateDocument(id, payload) {
 
 export async function getDocumentAnalytics() {
   return request('/api/analytics/documents');
+}
+
+export async function getUsers() {
+  return request('/api/users');
 }
 
 export async function getTimeAnalytics(dimension = 'tag') {

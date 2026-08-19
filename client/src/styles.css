@@ -142,6 +142,7 @@
   /* ---------- Layout primitives ---------- */
   .stack { @apply flex flex-col gap-5; }
   .row { @apply flex items-center gap-3 flex-wrap; }
+  .row-between { @apply flex items-center justify-between gap-2 flex-wrap; }
   .cards-grid {
     @apply grid gap-4;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -251,6 +252,8 @@
     @apply bg-surface-2;
   }
   .table td:last-child, .analytics table td:last-child { text-align: right; }
+  .actions { display: inline-flex; gap: 0.35rem; white-space: nowrap; }
+  .actions button { padding: 0.4rem 0.75rem; font-size: 0.82rem; }
 
   /* ---------- Check-in list ---------- */
   .checkins ul { @apply list-none p-0 flex flex-col gap-2; margin-top: 1rem; }
@@ -478,6 +481,33 @@
   .filter-bar .filter-label {
     @apply text-muted font-mono text-xs uppercase tracking-wider font-semibold;
   }
+
+  /* ---------- Topbar identity ---------- */
+  .topbar-right { @apply flex items-center gap-2 ml-2; }
+  .topbar-user { @apply text-ink-2 font-semibold text-sm; }
+
+  /* ---------- Login ---------- */
+  .login { @apply flex items-center justify-center min-h-screen px-4; }
+  .login-card { width: 100%; max-width: 440px; padding: 2rem; }
+  .login-card h1 { @apply font-display font-black text-ink; letter-spacing: -0.03em; }
+  .login-card select { width: 100%; margin-top: 1rem; }
+  .user-list { @apply flex flex-col gap-2 mt-5; }
+  .user-row {
+    @apply flex items-center justify-between gap-2 w-full text-left;
+    padding: 0.75rem 1rem; background: var(--color-surface-2);
+  }
+  .user-row:hover:not(:disabled) { @apply bg-surface-3; }
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 30;
+    background: color-mix(in oklch, var(--color-ink) 45%, transparent);
+    @apply flex items-center justify-center p-4;
+  }
+  .modal { width: 100%; max-width: 400px; @apply flex flex-col gap-2; }
+  .modal h3 { margin: 0 0 0.5rem; }
+  .modal label { @apply font-semibold text-sm text-ink-2 mt-2; }
+  .modal input { @apply w-full; }
 
   /* ---------- Recent (compatibility) ---------- */
   .recent ul { @apply list-none p-0; }

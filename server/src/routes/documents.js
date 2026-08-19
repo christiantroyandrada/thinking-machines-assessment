@@ -1,94 +1,47 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { mockAnalyzeDocument, mockSuggestWorkflow } from '../services/genai.js';
-import { asyncHandler, isPrismaNotFound } from '../middleware/asyncHandler.js';
-import { serializeDocument, serializeDocumentSummary } from '../utils/serialize.js';
-import { db } from '../db.js';
+import { asyncHandler } from '../middleware/asyncHandler.js';
+import {
+  analyzeDocument,
+  createDocument,
+  deleteDocument,
+  getDocument,
+  listDocuments,
+  MAX_FILE_SIZE,
+  suggestDocument,
+  updateDocument,
+} from '../services/documents.js';
 
-const upload = multer({ storage: multer.memoryStorage() });
 const router = Router();
-const ALLOWED_TYPE = ['PO', 'QUOTE', 'REQ'];
-const ALLOWED_STATUS = ['pending', 'in-review', 'approved', 'rejected'];
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: MAX_FILE_SIZE } });
 
 router.get('/', asyncHandler(async (req, res) => {
-  const where = {};
-  if (req.query.type) where.type = req.query.type;
-  if (req.query.status) where.status = req.query.status;
-  const documents = await db.document.findMany({ where, orderBy: { createdAt: 'desc' }, include: { checkIns: { select: { hours: true } } } });
-  res.json({ documents: documents.map(serializeDocumentSummary) });
+  res.json(await listDocuments(req.query));
 }));
 
 router.get('/:id', asyncHandler(async (req, res) => {
-  const doc = await db.document.findUnique({ where: { id: Number(req.params.id) }, include: { checkIns: { include: { user: true } } } });
-  if (!doc) return res.status(404).json({ error: 'Document not found' });
-  res.json(serializeDocument(doc));
+  res.json(await getDocument(Number(req.params.id)));
 }));
 
 router.post('/', upload.single('file'), asyncHandler(async (req, res) => {
-  const body = req.body || {};
-  const title = body.title || req.file?.originalname;
-  if (!title || !body.type) return res.status(400).json({ error: 'title and type are required' });
-  if (!ALLOWED_TYPE.includes(body.type)) return res.status(400).json({ error: 'type must be PO, QUOTE, or REQ' });
-  const contentText = body.contentText || (req.file && req.file.mimetype && req.file.mimetype.startsWith('text') ? req.file.buffer.toString('utf8') : '');
-  const doc = await db.document.create({
-    data: {
-      title,
-      type: body.type,
-      filename: req.file?.originalname || body.filename || title,
-      status: body.status || 'pending',
-      mimeType: req.file?.mimetype || body.mimeType || 'text/plain',
-      sizeBytes: (req.file?.size ?? Number(body.sizeBytes)) || 0,
-      contentText,
-    },
-  });
-  res.status(201).json(doc);
+  res.status(201).json(await createDocument({ file: req.file, body: req.body }));
 }));
 
 router.patch('/:id', asyncHandler(async (req, res) => {
-  const id = Number(req.params.id);
-  const data = {};
-  if (req.body.title !== undefined) data.title = req.body.title;
-  if (req.body.type !== undefined) data.type = req.body.type;
-  if (req.body.status !== undefined) {
-    if (!ALLOWED_STATUS.includes(req.body.status)) {
-      return res.status(400).json({ error: `status must be one of ${ALLOWED_STATUS.join(', ')}` });
-    }
-    data.status = req.body.status;
-  }
-  if (req.body.contentText !== undefined) data.contentText = req.body.contentText;
-  try {
-    const doc = await db.document.update({ where: { id }, data });
-    res.json(doc);
-  } catch (err) {
-    if (isPrismaNotFound(err)) return res.status(404).json({ error: 'Document not found' });
-    throw err;
-  }
+  res.json(await updateDocument(Number(req.params.id), req.body));
 }));
 
 router.delete('/:id', asyncHandler(async (req, res) => {
-  try {
-    await db.document.delete({ where: { id: Number(req.params.id) } });
-    res.status(204).end();
-  } catch (err) {
-    if (isPrismaNotFound(err)) return res.status(404).json({ error: 'Document not found' });
-    throw err;
-  }
+  await deleteDocument(Number(req.params.id));
+  res.status(204).end();
 }));
 
 router.post('/:id/analyze', asyncHandler(async (req, res) => {
-  const doc = await db.document.findUnique({ where: { id: Number(req.params.id) } });
-  if (!doc) return res.status(404).json({ error: 'Document not found' });
-  const result = mockAnalyzeDocument({ type: doc.type, title: doc.title, text: doc.contentText || '' });
-  await db.document.update({ where: { id: doc.id }, data: { analysis: JSON.stringify(result) } });
-  res.json({ analysis: result });
+  res.json({ analysis: await analyzeDocument(Number(req.params.id)) });
 }));
 
 router.post('/:id/suggest', asyncHandler(async (req, res) => {
-  const doc = await db.document.findUnique({ where: { id: Number(req.params.id) } });
-  if (!doc) return res.status(404).json({ error: 'Document not found' });
-  const analysis = doc.analysis ? JSON.parse(doc.analysis) : mockAnalyzeDocument({ type: doc.type, title: doc.title, text: doc.contentText || '' });
-  const suggestions = mockSuggestWorkflow({ type: doc.type, status: doc.status, analysis });
-  res.json({ suggestions });
+  res.json({ suggestions: await suggestDocument(Number(req.params.id)) });
 }));
 
 export default router;

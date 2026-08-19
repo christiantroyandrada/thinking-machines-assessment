@@ -1,3 +1,12 @@
+export function parseStoredAnalysis(value) {
+  if (!value) return null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
+}
+
 export function sumCheckInHours(checkIns = []) {
   return Number(checkIns.reduce((sum, c) => sum + (Number(c.hours) || 0), 0).toFixed(2));
 }
@@ -20,9 +29,20 @@ export function serializeCheckIn(c) {
 }
 
 export function serializeDocument(doc) {
-  return { ...doc, totalTimeSpent: sumCheckInHours(doc.checkIns) };
-}
-
-export function serializeDocumentSummary(doc) {
-  return { ...doc, linkedCheckIns: doc.checkIns.length, totalTimeSpent: sumCheckInHours(doc.checkIns) };
+  const checkIns = doc.checkIns || [];
+  return {
+    id: doc.id,
+    type: doc.type,
+    title: doc.title,
+    filename: doc.filename,
+    mimeType: doc.mimeType,
+    sizeBytes: doc.sizeBytes,
+    status: doc.status,
+    contentText: doc.contentText,
+    analysis: parseStoredAnalysis(doc.analysis),
+    totalTimeSpent: sumCheckInHours(checkIns),
+    checkInCount: checkIns.length,
+    createdAt: doc.createdAt,
+    updatedAt: doc.updatedAt,
+  };
 }

@@ -28,7 +28,7 @@ afterEach(() => vi.restoreAllMocks());
 describe('App', () => {
   it('renders nav and dashboard', async () => {
     render(<App />);
-    expect(screen.getByText('WorkSmart')).toBeTruthy();
+    expect(screen.getAllByText('WorkSmart').length).toBeGreaterThan(0);
     expect(await screen.findByText(/Welcome back/i)).toBeTruthy();
   });
 });

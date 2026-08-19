@@ -18,3 +18,6 @@ server/prisma/*.db-journal
 /test-results/
 /playwright-report/
 /blob-report/
+
+# UI capture artifacts
+/output/

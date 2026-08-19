@@ -51,3 +51,24 @@ test('admin team analytics renders', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /Team Analytics/i })).toBeVisible();
   await expect(page.locator('main')).toBeVisible();
 });
+
+test('sidebar is left-anchored on desktop, hidden mobile bar', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto('/');
+  await expect(page.locator('.sidebar')).toBeVisible();
+  const box = await page.locator('.sidebar').boundingBox();
+  expect(box.x).toBe(0);
+  await expect(page.locator('.mobile-bar')).toBeHidden();
+});
+
+test('sidebar drawer opens and closes on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+  await expect(page.locator('.mobile-bar')).toBeVisible();
+  const closed = await page.locator('.sidebar').boundingBox();
+  expect(closed.x).toBeLessThan(0);
+  await page.click('.hamburger');
+  await expect.poll(async () => (await page.locator('.sidebar').boundingBox()).x).toBe(0);
+  await page.keyboard.press('Escape');
+  await expect.poll(async () => (await page.locator('.sidebar').boundingBox()).x).toBeLessThan(0);
+});

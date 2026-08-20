@@ -1,0 +1,11 @@
+services:
+  nginx:
+    volumes:
+      - /opt/worksmart/deploy/vps/nginx/worksmart.conf:/etc/nginx/conf.d/worksmart.conf:ro
+    networks:
+      worksmart_gateway: {}
+
+networks:
+  worksmart_gateway:
+    name: worksmart_gateway
+    external: true

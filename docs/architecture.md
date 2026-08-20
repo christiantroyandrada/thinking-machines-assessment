@@ -4,13 +4,13 @@
 
 ```mermaid
 flowchart LR
-  Browser[Browser SPA\nReact + Vite] -->|HTTPS / REST + x-user-id| API[Express API\nNode.js]
+  Browser[Web browser] -->|HTTPS| Gateway[nginx on VPS]
+  Gateway -->|/ static files| Client[React + Vite SPA]
+  Gateway -->|/api + x-user-id| API[Express API\nNode.js]
   API --> DB[(Prisma ORM)]
-  DB --> SQLite[(SQLite\nlocal + persistent Render disk)]
+  DB --> SQLite[(SQLite\npersistent Docker volume)]
   API --> GENAI[Mock GenAI Service\n services/genai.js]
   GENAI -.->|future| LLM[(Real LLM\nOpenAI / Anthropic)]
-  Browser -->|static build| Vercel[Vercel]
-  API -->|deploy| Render[Render]
 ```
 
 ## 2. Tech Decisions (ADR-style)
@@ -20,10 +20,10 @@ flowchart LR
 | Frontend | React 18 + Vite (JavaScript) | Exam requires React; Vite for fast dev/build; JS per spec |
 | State | Zustand single app store; per-page data in local useState | The mock user identity (`x-user-id`) and the theme are shared across pages, so they live in one Zustand store (`client/src/store/useAppStore.js`); page data stays request-scoped in local useState. |
 | API | Node.js + Express | Same language as frontend; fast, minimal setup |
-| Persistence | Prisma + SQLite on persistent volumes | Same tested schema locally, in Docker, and on Render; no unverified provider mismatch |
+| Persistence | Prisma + SQLite on persistent volumes | Same tested schema locally and on the VPS; the production database survives container replacement |
 | File uploads | multer memory upload, 5MB cap, validated text formats | Retains analyzable content and rejects unsupported binaries clearly |
 | GenAI | Rule-based mock engine | UX-first mocks: deterministic, no external API, swappable |
-| Deploy | Vercel client + Render Docker API with persistent disk | Public deployment still requires account-owned manual publishing |
+| Deploy | Isolated Docker Compose project behind the VPS nginx gateway | Reuses the existing HTTPS gateway while keeping WorkSmart containers, network, and data separate |
 
 ## 3. Data Model
 
@@ -74,5 +74,5 @@ All mock logic is isolated in `server/src/services/genai.js` as **pure functions
 - Input validation on every route (parser rejects empty/non-numeric/negative hours; document status validated against an allow-list); invalid input returns `400` JSON.
 - 5MB upload cap via multer; TXT, Markdown, CSV, JSON, and LOG are accepted. Other formats return a 400 response instead of losing the file body.
 - Central `errorHandler` middleware returns consistent JSON `{ error }`; unknown routes return `404` JSON, server errors `500` JSON.
-- CORS is enabled for cross-origin deployment (client on Vercel, API on Render); origin-locking is slated for the roadmap.
+- The public client and API share one HTTPS origin through nginx. CORS remains enabled for local development; origin-locking is slated for the roadmap.
 - Note: the in-memory aggregations in `/api/analytics/time`, `/api/ai/insights`, `/api/ai/anomalies`, and `/api/ai/search` load all rows into the API process. This is correct and fast at the seeded scale (2 to 5k rows); at enterprise scale these become SQL `groupBy` queries. Documented as a scaling step.

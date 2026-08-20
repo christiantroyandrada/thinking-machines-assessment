@@ -10,7 +10,7 @@ This README indexes every deliverable the exam asks for. Each file is linked her
 
 | Deliverable | Link / Status |
 | --- | --- |
-| Deployed App | Local Docker verified (client :8080, API :4000). Public URL pending. See Deployment. |
+| Deployed App | [https://worksmart.ctaprojects.xyz](https://worksmart.ctaprojects.xyz) |
 | Source Code (GitHub, private) | this repository |
 | Demo Video (under 5 min) | [demo.webm](docs/presentation/demo.webm) ([script](docs/presentation/demo-script.md)) |
 | Slides (5 or fewer) | [slides.md](docs/presentation/slides.md) |
@@ -68,8 +68,8 @@ All GenAI features are mocks, as the exam allows ("you are NOT required to imple
 | Frontend | React (Vite, JavaScript not TypeScript) and Tailwind CSS v4 | Required by spec. Vite for fast dev and build. Tailwind v4 (CSS-first @theme, tokens in client/src/styles.css) for one design system. |
 | State | Zustand for identity/theme; component-local request state | Only truly cross-page state is global. Page data stays request-scoped. |
 | Backend | Node.js and Express | Same language as the frontend. Minimal setup. |
-| Database | SQLite via Prisma | Zero local setup; Docker and Render use a persistent database volume. |
-| Deployment | Vercel frontend and Render Docker API with persistent disk | Matches the tested SQLite schema without an unverified provider swap. |
+| Database | SQLite via Prisma | Zero local setup; Docker and the VPS use a persistent database volume. |
+| Deployment | Docker Compose on a VPS behind nginx and Let's Encrypt | Runs the tested client, API, and SQLite stack without a provider-specific database swap. |
 | GenAI (mocked) | Rule-based fixtures and keyword matches | Deterministic mocks. No external APIs. |
 
 Full rationale is in docs/architecture.md.
@@ -145,14 +145,14 @@ npm run test:e2e            # 10 Playwright UI/API specs (needs Docker stack run
 
 ## Deployment
 
-The app is containerized and ships with Render plus Vercel config. Publishing still requires the repository owner's Render/Vercel accounts and produces the public URL required by the exam.
+The app is deployed at [worksmart.ctaprojects.xyz](https://worksmart.ctaprojects.xyz) as an isolated Docker Compose project on a VPS. The existing nginx gateway terminates HTTPS and proxies `/api` to the Express service; SQLite lives in the persistent `worksmart_data` volume.
 
-- server/render.yaml. Render Docker web service with a persistent SQLite disk.
-- client/vercel.json. Vercel build and output config. Set VITE_API_URL to the Render API URL.
+- deploy/vps. Active VPS Compose and nginx configuration.
+- server/render.yaml and client/vercel.json. Alternative Render/Vercel deployment configuration.
 - docker-compose.yml. One-command local deployment.
 - The server startup applies the Prisma schema and runs a non-destructive seed: existing data is never replaced unless `npm run seed -- --force` is explicitly used.
 
-The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with `npm run test:e2e` passing 10 Playwright specs.
+The public HTTPS deployment passed all 10 Playwright browser and API flows. SQLite retained the same 100 users and database hash across an API-container restart, and the certificate renewal simulation passed.
 
 ## GenAI Tooling Disclosure
 

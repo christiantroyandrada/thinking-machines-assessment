@@ -48,7 +48,7 @@ React SPA (Vite)  ----HTTP---->  Express API  --->  Prisma  --->  persistent SQL
 - Backend: Express; identity via the x-user-id header (defaults to user 1, James Wong, admin) with a mock user switcher in the UI.
 - Data: Prisma ORM over SQLite locally and on a persistent production disk.
 - GenAI: isolated behind a service module with stable response shapes. A real provider adds an asynchronous server adapter while keeping the route and UI contracts.
-- Hosting: Vercel (client) and Render (server or API).
+- Hosting: Docker Compose on a VPS, behind nginx and Let's Encrypt HTTPS.
 
 ## Slide 5 — Roadmap
 

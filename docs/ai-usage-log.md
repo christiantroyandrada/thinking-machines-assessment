@@ -76,7 +76,7 @@ Other adopted findings included malformed IDs and dates returning 500 responses,
 
 - Server tests: 75 passed. Two complete server suites also passed concurrently.
 - Client tests: 34 passed.
-- Playwright: 10 browser and API flows passed against the rebuilt Docker stack.
+- Playwright: 10 browser and API flows passed against the public HTTPS deployment.
 - Production client build: passed.
 - Responsive audit: four pages checked at 390 px with no horizontal overflow.
 - Seed data after testing: 100 users, 7,535 hours, and 9 documents remained intact.
@@ -84,7 +84,7 @@ Other adopted findings included malformed IDs and dates returning 500 responses,
 ## What remained a human decision
 
 - The product scope stays intentionally demo-grade: mock identity, deterministic GenAI, and seeded assessment data.
-- The public deployment requires the repository owner's Render and Vercel accounts. It is not presented as complete in this repository.
+- The public deployment runs at https://worksmart.ctaprojects.xyz. VPS access, DNS changes, certificate issuance, and the shared nginx gateway remained owner-authorized actions.
 - The owner remains responsible for reviewing the code, accepting the trade-offs, sending the final submission email, and explaining the work during evaluation.
 
 ## Product AI versus development tooling

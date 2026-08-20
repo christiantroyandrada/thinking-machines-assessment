@@ -392,4 +392,4 @@ x-user-id: 1
 
 ## Notes
 
-- Local, Docker, and Render deployments use the same Prisma SQLite schema. Render mounts the database on a persistent disk.
+- Local Docker and the VPS deployment use the same Prisma SQLite schema. The VPS mounts the database from the persistent `worksmart_data` Docker volume.

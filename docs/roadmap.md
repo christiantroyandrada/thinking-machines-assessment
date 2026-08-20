@@ -9,7 +9,7 @@ Make the prototype safe to put in front of real users.
 - Real authentication and RBAC. Replace the x-user-id header switcher (docs/architecture.md section 4) with real login, sessions, and role-based access so admin versus user is enforced server-side.
 - Admin-managed org structure. Move User.department from free-text seed data to an admin-editable org model (teams, departments, managers).
 - Real file parsing. Replace the title or filename fallback with PDF text extraction and OCR for scanned procurement documents, feeding Document.contentText for analysis.
-- Deployment hardening. Lock CORS to known origins, add rate limiting, secrets management, and monitoring on the Vercel and Render stack already in use.
+- Deployment hardening. Lock CORS to known origins and add WorkSmart-specific rate limiting, backups, and monitoring on the VPS stack.
 - Analytics exports. CSV and Excel export of time, document, and anomaly reports for stakeholders.
 - User testing with the GenAI mocks. Validate the mock UX (smart-tag, document analysis, Ask AI) with real procurement staff. Collect the golden dataset the LLM evaluation harness will need later.
 
@@ -42,7 +42,7 @@ Scale from one procurement team to an enterprise platform.
 | E. Admin and polish | Admin dashboard, RBAC-aware admin, centralized error handling | 22 to 24 |
 | F. Deploy and docs | Tests, documentation, Docker, deployment | 25 to 36 |
 
-Each phase ships on its own. Phases A through E delivered the working assessment. Phase F produced the deployment config (Docker, Render, Vercel) and the full documentation set. The containerized app is verified running locally via Docker (http://localhost:8080). A public URL comes from the Render and Vercel deploy (configs in server/render.yaml and client/vercel.json).
+Each phase ships on its own. Phases A through E delivered the working assessment. Phase F produced the deployment configuration and full documentation set. The containerized app is live at https://worksmart.ctaprojects.xyz with persistent SQLite storage and automated certificate renewal checks.
 
 ## 5. Technical Evolution Strategy
 

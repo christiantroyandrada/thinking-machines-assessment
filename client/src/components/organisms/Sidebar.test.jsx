@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it } from 'vitest';
 import Sidebar from './Sidebar.jsx';
-import { useAppStore } from '../store/useAppStore.js';
+import { useAppStore } from '../../store/useAppStore.js';
 
 beforeEach(() => {
   useAppStore.setState({ currentUser: { id: 1, name: 'Ana', role: 'admin' } });

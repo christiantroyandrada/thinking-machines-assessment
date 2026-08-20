@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { listDocuments } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
-import UploadForm from '../components/UploadForm';
-import DocumentTable from '../components/DocumentTable';
-import Pagination from '../components/Pagination';
+import UploadForm from '../components/organisms/UploadForm.jsx';
+import DocumentTable from '../components/organisms/DocumentTable.jsx';
+import Pagination from '../components/molecules/Pagination.jsx';
 
 const PAGE_SIZE = 25;
 

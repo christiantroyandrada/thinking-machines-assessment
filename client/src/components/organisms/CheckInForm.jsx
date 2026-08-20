@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { parseCheckIn, createCheckIn } from '../api.js';
+import { parseCheckIn, createCheckIn } from '../../api.js';
 
 export default function CheckInForm({ onCreated }) {
   const [text, setText] = useState('');

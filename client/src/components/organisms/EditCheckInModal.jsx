@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { updateCheckIn } from '../api.js';
+import { updateCheckIn } from '../../api.js';
 
 export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
   const [hours, setHours] = useState(checkIn.hours);

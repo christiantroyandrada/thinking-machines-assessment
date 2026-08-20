@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { useAppStore } from '../store/useAppStore.js';
-import ThemeToggle from './ThemeToggle.jsx';
+import { useAppStore } from '../../store/useAppStore.js';
+import ThemeToggle from '../atoms/ThemeToggle.jsx';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Home', end: true },
@@ -18,6 +18,8 @@ export default function Sidebar() {
   const [open, setOpen] = useState(false);
   const currentUser = useAppStore((s) => s.currentUser);
   const setCurrentUser = useAppStore((s) => s.setCurrentUser);
+  const dark = useAppStore((s) => s.theme === 'dark');
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
   const location = useLocation();
   const toggleRef = useRef(null);
   const navRef = useRef(null);
@@ -77,7 +79,7 @@ export default function Sidebar() {
           <span className="sidebar-user">{currentUser?.name}</span>
           <div className="sidebar-actions">
             <button type="button" className="btn-ghost" onClick={() => setCurrentUser(null)}>Switch</button>
-            <ThemeToggle />
+            <ThemeToggle dark={dark} onToggle={toggleTheme} />
           </div>
         </div>
       </aside>

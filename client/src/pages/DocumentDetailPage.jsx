@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDocument, updateDocument, createCheckIn } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
-import StatusBadge from '../components/StatusBadge';
-import AnalysisCard from '../components/AnalysisCard';
-import SuggestionList from '../components/SuggestionList';
+import StatusBadge from '../components/atoms/StatusBadge.jsx';
+import AnalysisCard from '../components/organisms/AnalysisCard.jsx';
+import SuggestionList from '../components/organisms/SuggestionList.jsx';
 
 const STATUSES = ['pending', 'in-review', 'approved', 'rejected'];
 

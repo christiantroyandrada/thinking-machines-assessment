@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { uploadDocument } from '../api.js';
+import { uploadDocument } from '../../api.js';
 
 export default function UploadForm({ onUploaded }) {
   const fileRef = useRef();

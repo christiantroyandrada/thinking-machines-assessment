@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import EditCheckInModal from './EditCheckInModal.jsx';
 import UploadForm from './UploadForm.jsx';
 
-vi.mock('../api.js', () => ({
+vi.mock('../../api.js', () => ({
   updateCheckIn: vi.fn(),
   uploadDocument: vi.fn(),
 }));

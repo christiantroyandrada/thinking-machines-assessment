@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { suggestDocument } from '../api.js';
+import { suggestDocument } from '../../api.js';
 
 export default function SuggestionList({ documentId }) {
   const [suggestions, setSuggestions] = useState([]);

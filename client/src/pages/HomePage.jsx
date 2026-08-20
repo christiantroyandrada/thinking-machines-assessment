@@ -1,9 +1,9 @@
 import { useAsync } from '../hooks/useAsync.js';
 import { getInsights, getAnomalies, getTimeAnalytics, getDocumentAnalytics } from '../api.js';
 import { useAppStore } from '../store/useAppStore.js';
-import InsightCard from '../components/InsightCard';
-import AnomalyBanner from '../components/AnomalyBanner';
-import TimeChart from '../components/TimeChart';
+import InsightCard from '../components/molecules/InsightCard.jsx';
+import AnomalyBanner from '../components/molecules/AnomalyBanner.jsx';
+import TimeChart from '../components/TimeChart.jsx';
 
 export default function HomePage() {
   const currentUser = useAppStore((s) => s.currentUser);

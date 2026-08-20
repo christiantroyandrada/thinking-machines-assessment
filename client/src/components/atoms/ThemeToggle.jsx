@@ -1,5 +1,3 @@
-import { useAppStore } from '../store/useAppStore.js';
-
 function SunIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
@@ -17,17 +15,14 @@ function MoonIcon() {
   );
 }
 
-export default function ThemeToggle() {
-  const dark = useAppStore((s) => s.theme === 'dark');
-  const toggleTheme = useAppStore((s) => s.toggleTheme);
-
+export default function ThemeToggle({ dark, onToggle }) {
   return (
     <button
       type="button"
       className="theme-toggle"
       aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
       aria-pressed={dark}
-      onClick={toggleTheme}
+      onClick={onToggle}
     >
       {dark ? <SunIcon /> : <MoonIcon />}
     </button>

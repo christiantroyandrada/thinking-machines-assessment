@@ -1,4 +1,4 @@
-import Sidebar from '../Sidebar.jsx';
+import Sidebar from '../organisms/Sidebar.jsx';
 
 export default function AppShell({ children }) {
   return (

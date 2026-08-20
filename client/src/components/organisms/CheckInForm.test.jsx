@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import CheckInForm from './CheckInForm';
 
-vi.mock('../api.js', () => ({
+vi.mock('../../api.js', () => ({
   parseCheckIn: vi.fn(async (text) => ({ parsed: { hours: 2, tag: 'general', activities: text, valid: true, errors: [] } })),
   createCheckIn: vi.fn(async () => ({ id: 1 })),
 }));

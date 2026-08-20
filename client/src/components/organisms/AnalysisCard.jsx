@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { analyzeDocument } from '../api.js';
+import { analyzeDocument } from '../../api.js';
 
 export default function AnalysisCard({ documentId }) {
   const [analysis, setAnalysis] = useState(null);

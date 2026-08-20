@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as api from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
-import CheckInForm from '../components/CheckInForm.jsx';
-import CheckInTable from '../components/CheckInTable.jsx';
-import EditCheckInModal from '../components/EditCheckInModal.jsx';
-import Pagination from '../components/Pagination.jsx';
+import CheckInForm from '../components/organisms/CheckInForm.jsx';
+import CheckInTable from '../components/organisms/CheckInTable.jsx';
+import EditCheckInModal from '../components/organisms/EditCheckInModal.jsx';
+import Pagination from '../components/molecules/Pagination.jsx';
 import { useAppStore } from '../store/useAppStore.js';
 
 const PAGE_SIZE = 25;

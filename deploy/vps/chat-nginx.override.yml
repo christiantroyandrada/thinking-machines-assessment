@@ -1,7 +1,7 @@
 services:
   nginx:
     volumes:
-      - /opt/worksmart/deploy/vps/nginx/worksmart.conf:/etc/nginx/conf.d/worksmart.conf:ro
+      - /opt/worksmart/runtime/gateway-nginx.conf:/opt/bitnami/nginx/conf/nginx.conf:ro
     networks:
       worksmart_gateway: {}
 

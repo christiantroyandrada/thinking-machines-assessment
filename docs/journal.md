@@ -42,4 +42,4 @@ Thought process, assumptions, and decisions recorded during the engagement.
 - Application complete: 75 server tests and 34 client tests green, client build OK.
 - Documentation complete: product-vision, architecture (plus diagram), roadmap, genai-approach, api, user-guide, ai-usage-log, and this journal.
 - Deployed at https://worksmart.ctaprojects.xyz on the owner's VPS. All 10 Playwright specs passed against the public HTTPS URL; SQLite retained the same 100 users and database hash across an API-container restart.
-- Demo video recorded: docs/presentation/demo.webm (under 5 minutes), walking through the six GenAI touchpoints.
+- Demo video recorded and uploaded to the final Google Drive submission folder.

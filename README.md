@@ -2,18 +2,18 @@
 
 Take-home submission for the Engineering Consultant (Software Engineering) role at Thinking Machines Data Science.
 Case study: Meridian Manufacturing. Unified time tracking plus procurement document management, with GenAI features.
-Written in-character as a Thinking Machines software engineer, per the exam brief.
 
-## Quick Links (Master Index)
+## Quick Links
 
-This README indexes every deliverable the exam asks for. Each file is linked here and in Submission Notes below.
+The Google Drive submission index is the main entry point for reviewers. The repository copies below provide the supporting source material alongside the implementation.
 
 | Deliverable | Link / Status |
 | --- | --- |
+| Submission Index | [Google Drive submission index](https://docs.google.com/document/d/12agmSlEqGpt1PmCwiiRptaxbYu4vFEYF8GH0kz_eC64) |
 | Deployed App | [https://worksmart.ctaprojects.xyz](https://worksmart.ctaprojects.xyz) |
 | Source Code (GitHub, private) | this repository |
-| Demo Video (under 5 min) | [demo.webm](docs/presentation/demo.webm) ([script](docs/presentation/demo-script.md)) |
-| Slides (5 or fewer) | [slides.md](docs/presentation/slides.md) |
+| Demo Video (under 5 min) | [Google Drive video](https://drive.google.com/file/d/1n_d7n5jsppqGq4uy1rb6XiVAFbOTNaMm/view) |
+| Slides (5 or fewer) | [Google Slides presentation](https://docs.google.com/presentation/d/1Kyw1ZBh0cxoa-c-QEJcNDpKRZIWTvD9c7-jFMprG3Ws/edit) |
 | Product Vision (2 to 3 pages) | [product-vision.md](docs/product-vision.md) |
 | Product Roadmap (1 to 2 pages) | [roadmap.md](docs/roadmap.md) |
 | Architecture Diagram + Decisions | [architecture.md](docs/architecture.md) and [architecture-diagram.md](docs/architecture-diagram.md) |
@@ -95,9 +95,9 @@ worksmart/
 │   ├── prisma/             # schema and SQLite dev db
 │   ├── Dockerfile
 │   └── render.yaml         # Render blueprint (deploy)
-├── docs/                   # all written deliverables (see Quick Links)
+├── docs/                   # source material for the submission deliverables
 ├── docker-compose.yml      # containerized local run
-└── README.md               # this master index
+└── README.md               # setup, architecture summary, and reviewer links
 ```
 
 ## Getting Started
@@ -184,7 +184,7 @@ Short-term (3 to 6 months), medium-term (6 to 12 months), and long-term (12+ mon
 | User guide with screenshots | docs/user-guide.md and docs/screenshots/ |
 | Product vision (2 to 3 pages) | docs/product-vision.md |
 | Product roadmap (1 to 2 pages) | docs/roadmap.md |
-| Demo video (under 5 min) and slides (5 or fewer) | docs/presentation/ |
+| Demo video (under 5 min) and slides (5 or fewer) | Final Google Drive artifacts linked in Quick Links |
 | At least 3 GenAI features | 6 built (see Features) |
 | React frontend and DB persistence | client/ and server/ (Prisma and SQLite) |
 | Responsive, intuitive UI | client/src/styles.css (mobile breakpoints) |
@@ -202,7 +202,6 @@ Short-term (3 to 6 months), medium-term (6 to 12 months), and long-term (12+ mon
 ## Submission Notes
 
 - Repository is private. exam.txt is gitignored and not committed (per exam instructions not to leak the brief).
-- Repository access is private. Read access is accepted by tm-chester-supelana; invitations are pending for mamerisawesome, butchtm, tm-jase-evangelista, and tm-glenn.
-- All written deliverables are linked from this README (the exam's "index all your files in one document" requirement).
-- Final submission step: email the deliverables link to hiring@thinkingmachin.es to stop the timer.
-- Author: Christian Andrada. Submitted in-character as a Thinking Machines software engineer.
+- Repository access is limited to the candidate and the hiring-team GitHub accounts listed in the submission instructions.
+- The [Google Drive submission index](https://docs.google.com/document/d/12agmSlEqGpt1PmCwiiRptaxbYu4vFEYF8GH0kz_eC64) links the final written deliverables, demo, presentation, live application, and private repository.
+- Author: Christian Andrada.

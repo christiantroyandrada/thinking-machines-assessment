@@ -30,6 +30,30 @@ test('analytics page renders dimension sections', async ({ page }) => {
   await page.goto('/analytics');
   await expect(page.getByRole('heading', { name: /Analytics/i })).toBeVisible();
   await expect(page.locator('main')).toBeVisible();
+  await expect(page.locator('.time-chart-plot-desktop')).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Time by tag chart' })).toHaveCSS('clip', 'rect(0px, 0px, 0px, 0px)');
+});
+
+test('analytics chart exposes every category in the mobile layout', async ({ page }) => {
+  await page.setViewportSize({ width: 370, height: 740 });
+  await page.goto('/analytics');
+
+  const compactChart = page.getByRole('list', { name: 'Time by tag chart' });
+  await expect(compactChart).toBeVisible();
+  await expect(page.locator('.time-chart-plot-desktop')).toBeHidden();
+
+  const rows = compactChart.getByRole('listitem');
+  expect(await rows.count()).toBeGreaterThan(4);
+  await expect(rows.first().locator('strong')).toContainText(/hrs/);
+
+  const hasHorizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
+  expect(hasHorizontalOverflow).toBe(false);
+
+  await page.getByRole('button', { name: 'By user' }).click();
+  const userChart = page.getByRole('list', { name: 'Time by user chart' });
+  await expect(userChart).toBeVisible();
+  await expect(page.getByRole('button', { name: /Show \d+ more/ })).toBeVisible();
+  expect(await userChart.getByRole('listitem').count()).toBeLessThanOrEqual(12);
 });
 
 test('documents page lists procurement documents', async ({ page }) => {

@@ -329,27 +329,46 @@
   .analytics .bar span { @apply font-semibold; }
   .analytics .bar strong { @apply font-mono text-accent-strong; font-variant-numeric: tabular-nums; }
 
-  /* ---------- Bars (TimeChart) ---------- */
-  .bars { @apply list-none p-0 flex flex-col gap-3; margin-top: 1rem; }
-  .bars li { @apply grid items-center; grid-template-columns: 130px 1fr 64px; gap: 0.75rem; }
-  .bar-label { @apply text-ink-2; font-size: 0.85rem; font-weight: 500; }
-  .bar-track {
-    @apply bg-surface-2 border border-line rounded-pill; height: 12px; overflow: hidden;
-    position: relative;
+  /* ---------- Time charts ---------- */
+  .analytics-summary { @apply text-muted; margin-top: 0.75rem; }
+  .analytics-summary strong { @apply text-ink-2; font-weight: 600; }
+  .analytics-loading { @apply text-muted; min-height: 20rem; padding-top: 1rem; }
+  .time-chart { container: time-chart / inline-size; margin-top: 0.75rem; min-width: 0; }
+  .time-chart-plot { min-width: 0; }
+  .chart-tooltip {
+    @apply flex flex-col gap-1 rounded-md border shadow-card;
+    max-width: 12rem; padding: 0.65rem 0.75rem;
+    background: var(--color-surface); border-color: var(--color-line-strong); color: var(--color-ink);
   }
-  .bar-fill {
-    display: block; height: 100%; border-radius: var(--radius-pill);
-    background: linear-gradient(90deg, var(--color-accent), var(--color-accent-strong));
-    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-    position: relative;
+  .chart-tooltip span { @apply truncate text-muted; font-size: 0.76rem; }
+  .chart-tooltip strong { @apply font-mono text-accent-strong; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .chart-scope { @apply text-muted; margin: 0 0 0.5rem; font-size: 0.76rem; }
+  .compact-time-chart {
+    @apply absolute overflow-hidden list-none;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
   }
-  .bar-fill::after {
-    content: "";
-    position: absolute; top: 0; right: 0; bottom: 0; width: 20px;
-    background: linear-gradient(90deg, transparent, oklch(1 0 0 / 0.2));
-    border-radius: var(--radius-pill);
+  .compact-time-chart li { min-width: 0; }
+  .compact-chart-label { @apply flex items-baseline justify-between gap-4; }
+  .compact-chart-label span { @apply text-ink-2; min-width: 0; font-size: 0.86rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+  .compact-chart-label strong { @apply shrink-0 font-mono text-ink; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+  .compact-chart-track { @apply overflow-hidden; height: 0.55rem; margin-top: 0.4rem; border-radius: 2px; background: var(--color-surface-3); }
+  .compact-chart-track span { display: block; width: var(--chart-value); height: 100%; border-radius: inherit; background: var(--color-accent-strong); }
+  .compact-chart-more { @apply flex justify-center; padding-top: 0.25rem; }
+  .compact-chart-more button { min-height: 2.75rem; }
+  .time-chart-plot.is-hidden { display: none; }
+  .compact-time-chart.is-expanded {
+    @apply static flex flex-col;
+    width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
   }
-  .bar-value { @apply text-right font-mono text-ink-2; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+
+  @container time-chart (max-width: 34rem) {
+    .time-chart-plot-desktop { display: none; }
+    .compact-time-chart {
+      @apply static flex flex-col;
+      width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
+    }
+  }
 
   /* ---------- Status badges & tag pill ---------- */
   .status-badge {
@@ -427,7 +446,7 @@
   }
   .segmented button {
     @apply border-0 bg-transparent text-ink-2 font-semibold; font-size: 0.82rem;
-    padding: 0.5rem 1rem; border-radius: var(--radius-pill); cursor: pointer;
+    min-height: 2.75rem; padding: 0.5rem 1rem; border-radius: var(--radius-pill); cursor: pointer;
     white-space: nowrap; transition: all 0.15s ease;
   }
   .segmented button:hover { @apply text-ink; }
@@ -618,13 +637,19 @@
 
   @media (max-width: 760px) {
     .content { @apply px-4 py-5; padding-top: calc(60px + 1.25rem); }
-    .bars li { grid-template-columns: 90px 1fr 52px; }
     .kv { grid-template-columns: 110px 1fr; }
     .checkins li .muted { margin-left: 0; width: 100%; }
     .filter-bar { @apply flex-col items-stretch; }
     .stat strong { font-size: 2rem; }
     .segmented { @apply w-full flex-wrap; }
     .segmented button { flex: 1 1 auto; padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+    .analytics-card { padding: 1rem; }
+    .analytics-card .row-between { gap: 0.75rem; }
+    .time-chart-plot-desktop { display: none; }
+    .compact-time-chart {
+      @apply static flex flex-col;
+      width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
+    }
     .upload-fields { grid-template-columns: 1fr; align-items: stretch; }
     .upload-button { justify-self: start; }
     .checkin-example { display: block; margin: 0.35rem 0 0; line-height: 1.5; }

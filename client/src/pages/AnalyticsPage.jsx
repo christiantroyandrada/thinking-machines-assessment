@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { getTimeAnalytics } from '../api.js';
 import { useAsync } from '../hooks/useAsync.js';
-import TimeChart from '../components/TimeChart.jsx';
+import TimeChart from '../components/organisms/TimeChart.jsx';
+import { formatHours } from '../utils/formatters.js';
 
 const DIMENSIONS = [
   { value: 'tag', label: 'By tag' },
@@ -10,30 +11,38 @@ const DIMENSIONS = [
   { value: 'user', label: 'By user' },
 ];
 
+const DIMENSION_NOUNS = { tag: 'tag', date: 'day', department: 'department', user: 'user' };
 export default function AnalyticsPage() {
   const [dimension, setDimension] = useState('tag');
-  const { data, error } = useAsync(() => getTimeAnalytics(dimension), [dimension]);
+  const { data, error, loading } = useAsync(() => getTimeAnalytics(dimension), [dimension]);
 
   const totalHours = data?.totalHours ?? 0;
   const series = data?.series || [];
+  const groupNoun = `${DIMENSION_NOUNS[dimension]}${series.length === 1 ? '' : 's'}`;
 
   return (
     <section className="analytics stack">
       <h2>Analytics</h2>
       {error && <div className="error-banner">{error}</div>}
-      <div className="card">
+      <div className="card analytics-card">
         <div className="row-between">
           <h3>Time spent</h3>
           <div className="segmented" role="group" aria-label="analytics dimension">
             {DIMENSIONS.map((d) => (
-              <button key={d.value} className={dimension === d.value ? 'active' : ''} onClick={() => setDimension(d.value)}>
+              <button key={d.value} className={dimension === d.value ? 'active' : ''} aria-pressed={dimension === d.value} onClick={() => setDimension(d.value)}>
                 {d.label}
               </button>
             ))}
           </div>
         </div>
-        <p className="muted"><strong>{Number(totalHours).toFixed(1)} hrs</strong> logged across {series.length} group(s)</p>
-        <TimeChart dimension={dimension} series={series} />
+        {loading ? (
+          <p className="analytics-loading" role="status">Updating chart…</p>
+        ) : !error ? (
+          <>
+            <p className="analytics-summary"><strong>{formatHours(totalHours, { long: true })} across {series.length} {groupNoun}</strong></p>
+            <TimeChart key={dimension} dimension={dimension} series={series} />
+          </>
+        ) : null}
       </div>
     </section>
   );

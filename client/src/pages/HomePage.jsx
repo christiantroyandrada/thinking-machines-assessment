@@ -3,7 +3,7 @@ import { getInsights, getAnomalies, getTimeAnalytics, getDocumentAnalytics } fro
 import { useAppStore } from '../store/useAppStore.js';
 import InsightCard from '../components/molecules/InsightCard.jsx';
 import AnomalyBanner from '../components/molecules/AnomalyBanner.jsx';
-import TimeChart from '../components/TimeChart.jsx';
+import TimeChart from '../components/organisms/TimeChart.jsx';
 
 export default function HomePage() {
   const currentUser = useAppStore((s) => s.currentUser);

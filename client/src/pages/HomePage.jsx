@@ -19,14 +19,21 @@ export default function HomePage() {
   const totalDocuments = docStats.data?.totalDocuments ?? 0;
   const byStatus = docStats.data?.byStatus || {};
   const inStatusFlow = Object.values(byStatus).reduce((a, b) => a + b, 0);
+  const dashboardErrors = [insights.error, anomalies.error, timeData.error, docStats.error].filter(Boolean);
 
   return (
     <div className="stack">
       <h1>Welcome back, {currentUser?.name}</h1>
+      <p className="page-intro">Here’s the latest organization-wide activity.</p>
+      {dashboardErrors.length > 0 && (
+        <div className="error-banner" role="alert">
+          Some dashboard data could not be loaded: {[...new Set(dashboardErrors)].join(' ')}
+        </div>
+      )}
       <div className="cards-grid">
-        <div className="card stat"><strong>{Number(totalHours).toFixed(1)}</strong><span>hrs logged</span></div>
-        <div className="card stat"><strong>{totalDocuments}</strong><span>documents</span></div>
-        <div className="card stat"><strong>{inStatusFlow}</strong><span>in status flow</span></div>
+        <div className="card stat"><strong>{timeData.error ? '—' : Number(totalHours).toFixed(1)}</strong><span>organization hours</span></div>
+        <div className="card stat"><strong>{docStats.error ? '—' : totalDocuments}</strong><span>documents</span></div>
+        <div className="card stat"><strong>{docStats.error ? '—' : inStatusFlow}</strong><span>in status flow</span></div>
       </div>
       {insightList.length > 0 && (
         <div className="card">

@@ -1,3 +1,1 @@
-export default function TagPill({ tag }) {
-  return <span className="tag-pill">#{tag}</span>;
-}
+export { default } from './atoms/TagPill.jsx';

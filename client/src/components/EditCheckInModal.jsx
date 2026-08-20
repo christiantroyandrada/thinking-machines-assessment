@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { updateCheckIn } from '../api.js';
 
 export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
@@ -8,6 +8,20 @@ export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
   const [date, setDate] = useState(String(checkIn.date).slice(0, 10));
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const hoursRef = useRef(null);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement;
+    hoursRef.current?.focus();
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('keydown', closeOnEscape);
+      previouslyFocused?.focus?.();
+    };
+  }, [onClose]);
 
   async function save(e) {
     e.preventDefault();
@@ -25,10 +39,17 @@ export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <form className="card modal" onClick={(e) => e.stopPropagation()} onSubmit={save} aria-label="edit check-in">
-        <h3>Edit check-in</h3>
+      <form
+        className="card modal"
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={save}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="edit-checkin-title"
+      >
+        <h3 id="edit-checkin-title">Edit check-in</h3>
         <label htmlFor="edit-hours">Hours</label>
-        <input id="edit-hours" type="number" step="0.5" min="0" value={hours} onChange={(e) => setHours(e.target.value)} />
+        <input ref={hoursRef} id="edit-hours" type="number" step="0.5" min="0.5" max="24" value={hours} onChange={(e) => setHours(e.target.value)} />
         <label htmlFor="edit-tag">Tag</label>
         <input id="edit-tag" value={tag} onChange={(e) => setTag(e.target.value)} />
         <label htmlFor="edit-activities">Activities</label>

@@ -38,9 +38,9 @@ export default function CheckInForm({ onCreated }) {
 
   return (
     <form className="card checkin-form" onSubmit={submit}>
-      <label>Log a check-in <span className="muted">— <code>5.5 hrs #project-x fix login issue</code></span></label>
+      <label htmlFor="checkin-text">Log a check-in <span className="checkin-example">Example: <code>5.5 hrs #project-x fix login issue</code></span></label>
       <div className="row">
-        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs vendor negotiation for procurement" />
+        <input id="checkin-text" value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs vendor negotiation for procurement" />
         <button type="submit" disabled={saving || !text.trim()}>{saving ? 'Saving…' : 'Log it'}</button>
       </div>
       {preview && (

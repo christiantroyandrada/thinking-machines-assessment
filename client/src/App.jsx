@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Sidebar from './components/Sidebar.jsx';
+import AppShell from './components/templates/AppShell.jsx';
 import CheckInsPage from './pages/CheckInsPage.jsx';
 import AnalyticsPage from './pages/AnalyticsPage.jsx';
 import DocumentsPage from './pages/DocumentsPage.jsx';
@@ -19,10 +19,7 @@ export default function App() {
       {!currentUser ? (
         <LoginPage />
       ) : (
-        <div className="app">
-          <a href="#main" className="skip-link">Skip to content</a>
-          <Sidebar />
-          <main id="main" className="content">
+        <AppShell>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/check-ins" element={<CheckInsPage />} />
@@ -33,8 +30,7 @@ export default function App() {
               {currentUser.role === 'admin' && <Route path="/admin" element={<AdminPage />} />}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
-          </main>
-        </div>
+        </AppShell>
       )}
     </BrowserRouter>
   );

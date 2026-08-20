@@ -13,5 +13,7 @@ describe('DocumentsPage', () => {
     render(<MemoryRouter><DocumentsPage /></MemoryRouter>);
     await waitFor(() => expect(screen.getByText('Purchase Order')).toBeInTheDocument());
     expect(screen.getAllByText('pending').length).toBeGreaterThan(0);
+    expect(screen.getByLabelText('Status filter')).toBeInTheDocument();
+    expect(screen.getByLabelText('Type filter')).toBeInTheDocument();
   });
 });

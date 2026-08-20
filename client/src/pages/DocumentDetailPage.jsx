@@ -13,12 +13,22 @@ export default function DocumentDetailPage() {
   const [text, setText] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
+  const [statusSaving, setStatusSaving] = useState('');
 
   const { data: doc, error: loadError, run } = useAsync(() => getDocument(id), [id]);
 
   async function setStatus(status) {
-    await updateDocument(id, { status });
-    await run();
+    if (statusSaving) return;
+    setStatusSaving(status);
+    setError('');
+    try {
+      await updateDocument(id, { status });
+      await run();
+    } catch (statusError) {
+      setError(statusError.message);
+    } finally {
+      setStatusSaving('');
+    }
   }
 
   async function logTime(e) {
@@ -49,7 +59,9 @@ export default function DocumentDetailPage() {
           </div>
           <div className="segmented">
             {STATUSES.map((s) => (
-              <button key={s} className={doc.status === s ? 'active' : ''} onClick={() => setStatus(s)}>{s}</button>
+              <button type="button" key={s} disabled={Boolean(statusSaving)} className={doc.status === s ? 'active' : ''} onClick={() => setStatus(s)}>
+                {statusSaving === s ? 'Saving…' : s}
+              </button>
             ))}
           </div>
         </div>
@@ -62,10 +74,11 @@ export default function DocumentDetailPage() {
           <h3>Log time against this document</h3>
         </div>
         <form className="row" onSubmit={logTime}>
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs #procurement review vendor quote" />
+          <label className="sr-only" htmlFor="document-checkin-text">Check-in text</label>
+          <input id="document-checkin-text" value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs #procurement review vendor quote" />
           <button type="submit" disabled={saving || !text.trim()}>{saving ? 'Saving…' : 'Log'}</button>
         </form>
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="error-text" role="alert">{error}</p>}
       </div>
       <div className="card">
         <div className="section-header">
@@ -73,16 +86,16 @@ export default function DocumentDetailPage() {
           <span className="muted">{doc.checkIns.length} entries</span>
         </div>
         {doc.checkIns.length ? (
-          <table className="table">
+          <table className="data-table">
             <thead><tr><th>Date</th><th>Hours</th><th>Tag</th><th>Activities</th><th>User</th></tr></thead>
             <tbody>
               {doc.checkIns.map((c) => (
                 <tr key={c.id}>
-                  <td>{new Date(c.date).toLocaleDateString()}</td>
-                  <td>{c.hours} hr</td>
-                  <td><span className="tag-pill">#{c.tag}</span></td>
-                  <td>{c.activities}</td>
-                  <td>{c.user?.name || c.userName}</td>
+                  <td data-label="Date">{new Date(c.date).toLocaleDateString()}</td>
+                  <td data-label="Hours">{c.hours} hr</td>
+                  <td data-label="Tag"><span className="tag-pill">#{c.tag}</span></td>
+                  <td data-label="Activities">{c.activities}</td>
+                  <td data-label="User">{c.user?.name || c.userName}</td>
                 </tr>
               ))}
             </tbody>

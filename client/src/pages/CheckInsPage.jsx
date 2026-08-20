@@ -28,8 +28,8 @@ export default function CheckInsPage() {
   const total = data?.total || 0;
 
   useEffect(() => {
-    if (!users.length) api.getUsers().then((d) => setUsers(d.users)).catch(() => {});
-  }, [users.length]);
+    if (!users.length) api.getUsers().then((d) => setUsers(d.users)).catch((requestError) => setError(requestError.message));
+  }, [users.length, setError, setUsers]);
 
   const departments = useMemo(() => [...new Set(users.map((u) => u.department))].sort(), [users]);
 
@@ -43,11 +43,16 @@ export default function CheckInsPage() {
     }
   }
 
+  function refreshFromFirstPage() {
+    if (page === 1) run();
+    else setPage(1);
+  }
+
   return (
     <section className="checkins stack">
-      <h2>Check-ins</h2>
-      {error && <div className="error-banner">{error}</div>}
-      <CheckInForm onCreated={() => { setPage(1); run(); }} />
+      <h1>Check-ins</h1>
+      {error && <div className="error-banner" role="alert">{error}</div>}
+      <CheckInForm onCreated={refreshFromFirstPage} />
       <div className="card filter-bar">
         <input aria-label="filter by tag" placeholder="Tag (e.g. procurement)" value={tag} onChange={(e) => { setTag(e.target.value); setPage(1); }} />
         <select aria-label="filter by department" value={department} onChange={(e) => { setDepartment(e.target.value); setPage(1); }}>

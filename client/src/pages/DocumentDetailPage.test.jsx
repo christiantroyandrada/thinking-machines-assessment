@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import DocumentDetailPage from './DocumentDetailPage';
+import { updateDocument } from '../api.js';
 
 vi.mock('../api.js', () => ({
   getDocument: vi.fn(async (id) => ({ id: Number(id), title: 'PO #1', type: 'PO', status: 'in-review', filename: 'po1.txt', totalTimeSpent: 3, checkIns: [{ id: 9, hours: 3, activities: 'reviewed PO', date: '2026-08-01', tag: 'procurement', user: { name: 'Ana' } }] })),
@@ -32,5 +33,18 @@ describe('DocumentDetailPage', () => {
     fireEvent.click(await screen.findByText('Analyze with AI'));
     await waitFor(() => expect(screen.getByText('acme industrial')).toBeInTheDocument());
     expect(screen.getByText('Decide: approve or request revisions')).toBeInTheDocument();
+  });
+
+  it('surfaces failed status changes and prevents duplicate updates', async () => {
+    vi.mocked(updateDocument).mockRejectedValueOnce(new Error('Status update unavailable'));
+    render(
+      <MemoryRouter initialEntries={['/documents/1']}>
+        <Routes><Route path="/documents/:id" element={<DocumentDetailPage />} /></Routes>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(await screen.findByRole('button', { name: 'approved' }));
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Status update unavailable');
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import HomePage from './HomePage';
+import { getTimeAnalytics } from '../api.js';
 
 vi.mock('../api.js', () => ({
   getInsights: vi.fn(async () => ({ insights: [{ title: 'Total logged time', body: '42.0 hrs across 100 check-ins.', type: 'summary' }] })),
@@ -19,5 +20,13 @@ describe('HomePage dashboard', () => {
   it('shows document status summary', async () => {
     render(<HomePage />);
     await waitFor(() => expect(screen.getByText('9')).toBeInTheDocument());
+  });
+
+  it('does not disguise failed dashboard data as zero', async () => {
+    vi.mocked(getTimeAnalytics).mockRejectedValueOnce(new Error('Analytics unavailable'));
+
+    render(<HomePage />);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Analytics unavailable');
   });
 });

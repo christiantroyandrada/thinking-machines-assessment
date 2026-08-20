@@ -28,11 +28,15 @@ export default function AdminPage() {
         <div className="section-header">
           <h3>Hours by department</h3>
         </div>
-        <table className="table">
+        <table className="data-table">
           <thead><tr><th>Department</th><th>Users</th><th>Hours</th></tr></thead>
           <tbody>
             {data.departmentBreakdown.map((d) => (
-              <tr key={d.department}><td>{d.department}</td><td>{d.users}</td><td>{Number(d.hours).toFixed(1)}</td></tr>
+              <tr key={d.department}>
+                <td data-label="Department">{d.department}</td>
+                <td data-label="Users">{d.users}</td>
+                <td data-label="Hours">{Number(d.hours).toFixed(1)}</td>
+              </tr>
             ))}
           </tbody>
         </table>

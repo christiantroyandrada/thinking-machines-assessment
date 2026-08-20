@@ -11,7 +11,7 @@ test('dashboard shows insights and stat cards', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('heading', { name: /Welcome back/i })).toBeVisible();
   await expect(page.locator('.cards-grid').first()).toBeVisible();
-  await expect(page.getByText(/hrs logged/i)).toBeVisible();
+  await expect(page.getByText(/organization hours/i)).toBeVisible();
 });
 
 test('check-ins list renders seeded data (1000+)', async ({ page }) => {

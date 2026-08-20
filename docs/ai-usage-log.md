@@ -75,8 +75,8 @@ Other adopted findings included malformed IDs and dates returning 500 responses,
 ## Final verification
 
 - Server tests: 75 passed. Two complete server suites also passed concurrently.
-- Client tests: 25 passed.
-- Playwright: 9 browser and API flows passed against the rebuilt Docker stack.
+- Client tests: 34 passed.
+- Playwright: 10 browser and API flows passed against the rebuilt Docker stack.
 - Production client build: passed.
 - Responsive audit: four pages checked at 390 px with no horizontal overflow.
 - Seed data after testing: 100 users, 7,535 hours, and 9 documents remained intact.

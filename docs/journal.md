@@ -33,13 +33,13 @@ Thought process, assumptions, and decisions recorded during the engagement.
 
 - Node not on the default PATH. Used the nvm-provided Node at C:\Users\Admin\.nvm\versions\node\v24.19.0\bin, added to PATH per shell session.
 - SQLite user ID skew. After an early reseed, seeded user IDs started at 307, so authMiddleware's default userId = 1 pointed at a missing user and every create or update returned a 500 FK violation. Fixed by reseeding so IDs start at 1.
-- Playwright ran locally. The Docker stack was brought up, screenshots were captured with scripts/capture-screenshots.mjs and embedded in docs/user-guide.md, and all 9 Playwright UI/API specs pass against the live stack.
+- Playwright ran locally. The Docker stack was brought up, screenshots were captured with scripts/capture-screenshots.mjs and embedded in docs/user-guide.md, and all 10 Playwright UI/API specs pass against the live stack.
 - A final Codex review found that the first server test setup reused the Docker SQLite database. Tests now create a unique disposable database per run; two complete suites pass concurrently without changing the demo data.
 - Plan bugs found and fixed during the build. api/client.js non-existence, the Zustand-store assumption, byTag.slice to byTag.series.slice, and the missing role-guard reality were reconciled against the actual implementation.
 
 ## Entry 6 — Final status
 
-- Application complete: 75 server tests and 25 client tests green, client build OK.
+- Application complete: 75 server tests and 34 client tests green, client build OK.
 - Documentation complete: product-vision, architecture (plus diagram), roadmap, genai-approach, api, user-guide, ai-usage-log, and this journal.
-- Docker verified running locally: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing 9 Playwright specs. Deploy is a manual Render (server) plus Vercel (client) step, and the public URL is pending that account-owned step.
+- Docker verified running locally: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing 10 Playwright specs. Deploy is a manual Render (server) plus Vercel (client) step, and the public URL is pending that account-owned step.
 - Demo video recorded: docs/presentation/demo.webm (under 5 minutes), walking through the six GenAI touchpoints.

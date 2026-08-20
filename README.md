@@ -138,9 +138,9 @@ docker compose up --build
 Run tests
 ```bash
 npm --prefix server test    # 75 tests on a per-run isolated disposable test DB
-npm --prefix client test    # 25 tests
+npm --prefix client test    # 34 tests
 npm --prefix client run build
-npm run test:e2e            # 9 Playwright UI/API specs (needs Docker stack running)
+npm run test:e2e            # 10 Playwright UI/API specs (needs Docker stack running)
 ```
 
 ## Deployment
@@ -152,7 +152,7 @@ The app is containerized and ships with Render plus Vercel config. Publishing st
 - docker-compose.yml. One-command local deployment.
 - The server startup applies the Prisma schema and runs a non-destructive seed: existing data is never replaced unless `npm run seed -- --force` is explicitly used.
 
-The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with `npm run test:e2e` passing 9 Playwright specs.
+The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with `npm run test:e2e` passing 10 Playwright specs.
 
 ## GenAI Tooling Disclosure
 
@@ -196,7 +196,7 @@ Short-term (3 to 6 months), medium-term (6 to 12 months), and long-term (12+ mon
 | Bonus: extendable architecture | Validated document type contract, contentText and analysis fields. See docs/genai-approach.md |
 | Bonus: error handling | server/src/middleware/error.js and server/tests/error.test.js |
 | Bonus: project journal | docs/journal.md |
-| Bonus: test coverage | 75 server tests and 25 client tests, plus 9 Playwright specs |
+| Bonus: test coverage | 75 server tests and 34 client tests, plus 10 Playwright specs |
 | Bonus: API documentation | docs/api.md |
 
 ## Submission Notes

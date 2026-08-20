@@ -46,3 +46,8 @@ export function serializeDocument(doc) {
     updatedAt: doc.updatedAt,
   };
 }
+
+export function serializeDocumentSummary(doc) {
+  const { contentText, analysis, ...summary } = serializeDocument(doc);
+  return summary;
+}

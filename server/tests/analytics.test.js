@@ -2,6 +2,7 @@ import { beforeAll, afterAll, describe, it, expect } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../src/app.js';
 import { db } from '../src/db.js';
+import { aggregateBy } from '../src/services/analytics.js';
 
 const app = createApp();
 
@@ -22,6 +23,20 @@ afterAll(async () => {
 });
 
 describe('analytics', () => {
+  it('orders date series chronologically for charting', () => {
+    const series = aggregateBy([
+      { date: new Date('2026-08-01'), hours: 1 },
+      { date: new Date('2026-08-02'), hours: 8 },
+      { date: new Date('2026-08-03'), hours: 2 },
+    ], 'date');
+
+    expect(series.map((entry) => entry.key)).toEqual([
+      '2026-08-01',
+      '2026-08-02',
+      '2026-08-03',
+    ]);
+  });
+
   it('aggregates time by tag', async () => {
     const res = await request(app).get('/api/analytics/time?dimension=tag');
     expect(res.status).toBe(200);

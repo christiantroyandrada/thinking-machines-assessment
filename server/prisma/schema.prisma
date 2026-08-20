@@ -26,7 +26,7 @@ model CheckIn {
   tag        String
   activities String
   documentId Int?
-  document   Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  document   Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }

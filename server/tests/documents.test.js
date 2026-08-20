@@ -7,11 +7,15 @@ const app = createApp();
 
 beforeAll(async () => {
   await db.document.deleteMany();
-  await db.user.deleteMany({ where: { email: 'doctester@meridian.com' } });
+  await db.user.deleteMany({
+    where: { email: { in: ['doctester@meridian.com', 'preserve-checkin@meridian.com'] } },
+  });
 });
 afterAll(async () => {
   await db.document.deleteMany();
-  await db.user.deleteMany({ where: { email: 'doctester@meridian.com' } });
+  await db.user.deleteMany({
+    where: { email: { in: ['doctester@meridian.com', 'preserve-checkin@meridian.com'] } },
+  });
   await db.$disconnect();
 });
 
@@ -33,6 +37,8 @@ describe('documents', () => {
     expect(res.body.total).toBeGreaterThanOrEqual(1);
     expect(res.body.items[0]).toHaveProperty('totalTimeSpent');
     expect(res.body.items[0]).toHaveProperty('checkInCount');
+    expect(res.body.items[0]).not.toHaveProperty('contentText');
+    expect(res.body.items[0]).not.toHaveProperty('analysis');
   });
 
   it('filters by status', async () => {
@@ -55,11 +61,22 @@ describe('documents', () => {
     const res = await request(app).patch(`/api/documents/${created.body.id}`).send({ status: 'in-review' });
     expect(res.status).toBe(200);
     expect(res.body.status).toBe('in-review');
+    expect(res.body.contentText).toBe('Req');
   });
 
   it('rejects missing file', async () => {
     const res = await request(app).post('/api/documents').field('type', 'PO');
     expect(res.status).toBe(400);
+  });
+
+  it('rejects file formats that cannot be retained or analyzed', async () => {
+    const res = await request(app)
+      .post('/api/documents')
+      .field('type', 'OTHER')
+      .attach('file', Buffer.from([0, 1, 2, 3]), 'installer.exe');
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toContain('Supported');
   });
 
   it('deletes a document', async () => {
@@ -76,5 +93,35 @@ describe('documents', () => {
     const detail = await request(app).get(`/api/documents/${doc.body.id}`);
     expect(detail.body.totalTimeSpent).toBe(5);
     expect(detail.body.checkIns).toHaveLength(2);
+  });
+
+  it('preserves linked check-ins when a document is deleted', async () => {
+    const user = await db.user.create({
+      data: {
+        name: 'Preserve Check-in',
+        email: 'preserve-checkin@meridian.com',
+        department: 'Engineering',
+        role: 'user',
+      },
+    });
+    const document = await request(app)
+      .post('/api/documents')
+      .field('type', 'PO')
+      .attach('file', Buffer.from('PO'), 'preserve.txt');
+    const checkIn = await db.checkIn.create({
+      data: {
+        userId: user.id,
+        documentId: document.body.id,
+        hours: 1,
+        date: new Date('2026-08-03'),
+        tag: 'procurement',
+        activities: 'Prepare purchase order',
+      },
+    });
+
+    await request(app).delete(`/api/documents/${document.body.id}`).expect(204);
+
+    const preserved = await db.checkIn.findUnique({ where: { id: checkIn.id } });
+    expect(preserved).toMatchObject({ id: checkIn.id, documentId: null });
   });
 });

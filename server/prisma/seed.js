@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
-const db = new PrismaClient();
+const standaloneDb = new PrismaClient();
 
 const DEPARTMENTS = {
   procurement: 40,
@@ -39,7 +41,17 @@ function isoDaysAgo(days) {
   return new Date(d.toISOString().slice(0, 10));
 }
 
-async function main() {
+export async function seedDatabase(db, { force = false } = {}) {
+  const [userCount, checkInCount, documentCount] = await Promise.all([
+    db.user.count(),
+    db.checkIn.count(),
+    db.document.count(),
+  ]);
+
+  if (!force && userCount + checkInCount + documentCount > 0) {
+    return { skipped: true, reason: 'database-not-empty' };
+  }
+
   await db.checkIn.deleteMany();
   await db.document.deleteMany();
   await db.user.deleteMany();
@@ -112,12 +124,28 @@ async function main() {
   }
 
   console.log(`Seeded ${dbUsers.length} users, ${allCheckIns.length} check-ins, ${count} documents.`);
+  return {
+    skipped: false,
+    users: dbUsers.length,
+    checkIns: allCheckIns.length,
+    documents: count,
+  };
 }
 
-main()
-  .then(() => db.$disconnect())
-  .catch(async (e) => {
-    console.error(e);
-    await db.$disconnect();
-    process.exit(1);
-  });
+const isDirectExecution = process.argv[1]
+  && import.meta.url === pathToFileURL(resolve(process.argv[1])).href;
+
+if (isDirectExecution) {
+  seedDatabase(standaloneDb, { force: process.argv.includes('--force') })
+    .then(async (result) => {
+      if (result.skipped) {
+        console.log('Database already contains data; seed skipped. Use --force to replace it.');
+      }
+      await standaloneDb.$disconnect();
+    })
+    .catch(async (error) => {
+      console.error(error);
+      await standaloneDb.$disconnect();
+      process.exit(1);
+    });
+}

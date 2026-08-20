@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { parseCheckIn } from '../services/parser.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 import { createCheckIn, deleteCheckIn, listCheckIns, updateCheckIn } from '../services/checkins.js';
+import { parsePositiveInteger } from '../utils/validation.js';
 
 const router = Router();
 
@@ -18,11 +19,11 @@ router.post('/', asyncHandler(async (req, res) => {
 }));
 
 router.patch('/:id', asyncHandler(async (req, res) => {
-  res.json(await updateCheckIn(Number(req.params.id), req.body));
+  res.json(await updateCheckIn(parsePositiveInteger(req.params.id), req.body));
 }));
 
 router.delete('/:id', asyncHandler(async (req, res) => {
-  await deleteCheckIn(Number(req.params.id));
+  await deleteCheckIn(parsePositiveInteger(req.params.id));
   res.status(204).end();
 }));
 

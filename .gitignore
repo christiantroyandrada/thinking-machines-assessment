@@ -21,3 +21,4 @@ server/prisma/*.db-journal
 
 # UI capture artifacts
 /output/
+/tmp/*

@@ -39,15 +39,15 @@ Each is clearly marked as mock or confident in the UI today, ready to be upgrade
 A conventional, deployable full-stack shape with a mock-GenAI seam.
 
 ```
-React SPA (Vite)  ----HTTP---->  Express API  --->  Prisma  --->  SQLite (dev) / Postgres (prod)
+React SPA (Vite)  ----HTTP---->  Express API  --->  Prisma  --->  persistent SQLite
                                    |
                                    +--->  GenAI service layer  (mock today, swappable to real model)
 ```
 
 - Frontend: React SPA (Vite dev server on :8080).
-- Backend: Express; identity via the x-user-id header (defaults to user 1, James Wong, admin). No login UI.
-- Data: Prisma ORM over SQLite locally, Postgres in production.
-- GenAI: isolated behind a service module so the mock can be replaced without touching routes or UI.
+- Backend: Express; identity via the x-user-id header (defaults to user 1, James Wong, admin) with a mock user switcher in the UI.
+- Data: Prisma ORM over SQLite locally and on a persistent production disk.
+- GenAI: isolated behind a service module with stable response shapes. A real provider adds an asynchronous server adapter while keeping the route and UI contracts.
 - Hosting: Vercel (client) and Render (server or API).
 
 ## Slide 5 — Roadmap

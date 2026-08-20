@@ -48,8 +48,8 @@ Each phase ships on its own. Phases A through E delivered the working assessment
 
 A staged, low-risk path from deterministic mocks to governed LLMs:
 
-1. Mock interface today. Pure functions in services/genai.js with stable contracts. Routes and UI depend only on the signatures (docs/architecture.md section 5).
-2. Provider abstraction. Add a GenAIProvider interface. MockProvider ships now; LLMProvider (OpenAI or Anthropic) plugs in later with no route or UI changes.
+1. Mock interface today. Pure functions in services/genai.js return stable response shapes consumed by the application services and UI.
+2. Provider abstraction. Add an asynchronous GenAIProvider interface. MockProvider ships now; LLMProvider (OpenAI or Anthropic) can keep the public API and UI response shapes after the server call sites add timeouts and fallbacks.
 3. Evaluation harness. A golden set of check-ins and documents with expected outputs (built from short-term user testing) gates every provider change and catches regressions before rollout.
 4. Feature flags. Turn on real providers per feature (start with categorization, then search) so rollout is incremental and reversible.
 5. Cost and guardrails. Confidence thresholds, human confirmation for high-impact actions, token budgets, and response caching keep spend predictable and outputs safe.

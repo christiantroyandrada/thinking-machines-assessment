@@ -29,7 +29,7 @@ Typical statuses: `400` (validation), `404` (not found), `204` (no content on de
 
 ### Content type
 
-JSON request bodies use `Content-Type: application/json`. File uploads use `multipart/form-data`. Uploads are handled by `multer` with **in-memory storage**; the server enforces a **5 MB** single-file limit (the multer default) on `POST /api/documents`.
+JSON request bodies use `Content-Type: application/json`. File uploads use `multipart/form-data`. Uploads are handled by `multer` with **in-memory storage**; the server enforces a **5 MB** single-file limit and accepts TXT, Markdown, CSV, JSON, and LOG files on `POST /api/documents`.
 
 ---
 
@@ -142,7 +142,7 @@ Partial update. Body fields (all optional): `hours` (positive number), `tag`, `a
 Deletes the check-in. Returns `204 No Content`. `404` if not found.
 
 ### GET `/api/analytics/time?dimension=tag|date|department|user`
-Aggregates logged hours. Default dimension is `tag`. Unknown dimensions return `400`. Each `series` entry has `key` (the dimension value), `hours` (summed) and `count`. `totalHours` is the sum.
+Aggregates logged hours. The `dimension` query is required; missing or unknown dimensions return `400`. Each `series` entry has `key` (the dimension value), `hours` (summed) and `count`. `totalHours` is the sum.
 
 ```json
 {
@@ -190,7 +190,7 @@ Returns the created document record (including `id`, `title`, `type`, `status`, 
 ```
 
 ### GET `/api/documents`
-List/filter documents, paginated. Optional `?q=` (search title), `?status=` and `?type=` filters. Each item is the full document plus `checkInCount` (count of linked check-ins) and `totalTimeSpent` (summed hours of linked check-ins).
+List/filter document summaries, paginated. Optional `?q=` (search title), `?status=` and `?type=` filters. Large `contentText` and `analysis` fields are intentionally omitted; each item includes `checkInCount` and `totalTimeSpent`.
 
 ```json
 {
@@ -198,7 +198,6 @@ List/filter documents, paginated. Optional `?q=` (search title), `?status=` and 
     {
       "id": 3, "title": "PO-4471", "type": "PO", "status": "approved",
       "filename": "po-4471.txt", "mimeType": "text/plain", "sizeBytes": 1024,
-      "contentText": "vendor Acme total 1500.00 ...", "analysis": null,
       "createdAt": "2026-08-18T10:00:00.000Z", "updatedAt": "2026-08-18T10:00:00.000Z",
       "checkInCount": 5, "totalTimeSpent": 12.5
     }
@@ -208,7 +207,7 @@ List/filter documents, paginated. Optional `?q=` (search title), `?status=` and 
 ```
 
 ### GET `/api/documents/:id`
-Document detail with its linked check-ins. Returns the full document (including `totalTimeSpent`) and a `checkIns` array. Each check-in carries `hours`, `activities`, `date`, `tag`, and `user` (the full user record, including `name`).
+Document detail with its linked check-ins. Returns the full document (including `contentText`, `analysis`, and `totalTimeSpent`) plus a `checkIns` array. Each check-in carries `hours`, `activities`, `date`, `tag`, and `userName`.
 
 ```json
 {
@@ -217,14 +216,14 @@ Document detail with its linked check-ins. Returns the full document (including 
   "checkIns": [
     {
       "hours": 2, "activities": "vendor negotiation", "date": "2026-08-01T00:00:00.000Z",
-      "tag": "procurement", "user": { "id": 1, "name": "Alice", "department": "Procurement", "role": "buyer", "email": "alice@corp.com" }
+      "tag": "procurement", "userName": "Alice"
     }
   ]
 }
 ```
 
 ### PATCH `/api/documents/:id`
-Update `title`, `type`, `status`, or `contentText`. `status` must be one of `pending`, `in-review`, `approved`, `rejected`. Returns the updated document. `404` if not found.
+Update `title`, `type`, or `status`. `type` must be `PO`, `QUOTE`, `REQ`, or `OTHER`; `status` must be one of `pending`, `in-review`, `approved`, `rejected`. Returns the updated document. `404` if not found.
 
 ### DELETE `/api/documents/:id`
 Deletes the document. Returns `204 No Content`. `404` if not found.
@@ -393,4 +392,4 @@ x-user-id: 1
 
 ## Notes
 
-- The SQLite → Postgres production swap is documented in `docs/architecture.md` (Task 29), not here.
+- Local, Docker, and Render deployments use the same Prisma SQLite schema. Render mounts the database on a persistent disk.

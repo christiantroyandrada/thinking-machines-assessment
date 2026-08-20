@@ -1,56 +1,92 @@
-# WorkSmart — AI Tooling Usage Log
+# WorkSmart AI-assisted development log
 
-Per the exam's transparency rule: document the GenAI or AI tools used to produce this submission, with the prompts and the outputs.
+The exam allows AI tools but asks candidates to document how they were used. This is the durable record for this submission.
 
-## Tooling used
+## Tools used
 
-- opencode (an AI coding agent) was used for planning, code generation, and documentation across the whole build. It ran the 36-task plan through subagent-driven sequential execution (one implementer and one reviewer per task) against this repository.
-- Environment: PowerShell on Windows. Node came from nvm at C:\Users\Admin\.nvm\versions\node\v24.19.0\bin. Node was not on the default PATH, so it was added for each shell session.
-- WebSearch and WebFetch: not used. All work came from the provided exam.txt and the local repository. No external lookups were needed.
+- **opencode** helped turn the exam brief into a 36-task implementation plan, then assisted with the first working version of the code, tests, Docker setup, and documentation.
+- **OpenAI Codex Desktop** reviewed the finished build on 20 August 2026. It was used for debugging, UI and accessibility improvements, architecture cleanup, test isolation, documentation checks, and final verification.
+- The application itself does not call OpenAI, Anthropic, or another hosted model. Its six GenAI features are deterministic mocks in `server/src/services/genai.js`.
 
-## Session log
+No web search or external reference material was used for the implementation review. The exam PDF and the repository were the sources of truth.
 
-| Date | Tool | Prompt (paraphrased) | Output adopted | Corrections |
+## How the tools were used
+
+| Date | Tool | Request | Result kept in the submission | Human check or correction |
 | --- | --- | --- | --- | --- |
-| 2026-08-18 | opencode | Build WorkSmart per the 36-task plan for the Thinking Machines exam. | Master planning prompt; generated docs/superpowers/plans/2026-08-18-worksmart-full-build.md, then ran tasks 1 to 36. | none |
-| 2026-08-18 | opencode | Implement Task 5, the check-in parser, with TDD. | server/src/routes/checkins.js parse endpoint plus server/tests/checkins.test.js (TDD first, then implementation). | Parser normalizes `<number> [hr|hrs] #<tag> <activities>`; missing tag goes to general. |
-| 2026-08-18 | opencode | Reconcile Task 15 client to the real API, api/client.js does not exist. | Used the existing client/src/api.js named functions instead of the planned api/client.js; extended listDocuments to forward { page, pageSize, status, type }. | Plan said api/client.js; implementation uses api.js, corrected to match. |
-| 2026-08-18 | opencode | Implement Task 17, the mock GenAI engine. | server/src/services/genai.js with mockCategorize, mockAnalyzeDocument, mockSuggestWorkflow, mockSearch, mockTimeInsights, mockAnomalies; 9-test suite green. | Rule-based mocks only, no real LLM. |
-| 2026-08-18 | opencode | Admin and Insights routes have no role guard, reconcile. | Left routes unguarded; there is no auth backend. Identity is the x-user-id header only, defaulting to user 1. | Plan implied guards; implementation has none because auth is mocked. |
-| 2026-08-18 | opencode | Fix pagination labels. | client/src/components/Pagination.jsx uses Prev / Next (the component test asserts these labels). | Labels corrected to spec. |
-| 2026-08-18 | opencode | Fix analytics byTag.slice to byTag.series.slice. | server/src/routes/admin.js calls aggregateBy(checkins, 'tag'), which returns { series, total }; top tags read byTag.series.slice(0,5). | Plan referenced byTag.slice; corrected to byTag.series.slice. |
-| 2026-08-18 | opencode | Author docs (28 to 36): product-vision, architecture, roadmap, genai-approach, api, user-guide, ai-usage-log, journal. | Created the documentation set after code was complete. | Dropped the planned Zustand store in favor of React component-local state (see journal). |
+| 18 Aug 2026 | opencode | Read the exam and identify the required deliverables. | A clean requirements summary and the initial build plan. | The exam text remains gitignored so the brief is not published with the answer. |
+| 18-19 Aug 2026 | opencode | Build WorkSmart from the 36-task plan. | The initial React app, Express API, Prisma schema, mock GenAI features, tests, Docker files, and documentation. | Plan mistakes were reconciled against the real code, including the API filename, Zustand usage, and analytics return shape. |
+| 20 Aug 2026 | Codex | Critique and improve the completed build, especially its UI, React component structure, and Node layering. | Atomic Design folders, thinner routes, repository and service boundaries, responsive tables, clearer errors, safer forms, and accessibility improvements. | Changes were checked against the original plan and exam rather than accepted blindly. |
+| 20 Aug 2026 | Codex with adversarial critics | Look for failure modes a normal review could miss. | Safer seed behaviour, disposable per-run test databases, stricter request validation, non-destructive document deletion, and smaller document-list payloads. | A critic found that the first test setup could erase the Docker development database. The final setup was changed and then proven with two concurrent test runs. |
+| 20 Aug 2026 | Codex | Review the final documentation and AI disclosure, remove local review artifacts, create focused commits, and push. | Corrected test counts, architecture wording, AI disclosure, and repository hygiene. | Unsupported claims about screenshots and completed deployment were removed. |
 
-### Corrections made during the build (consolidated)
+## Representative working prompts and results
 
-- api/client.js did not exist. The client uses the actual client/src/api.js named functions. The plan's api/client.js reference was wrong.
-- The planned Zustand store was dropped during the initial build, then added later (JavaScript only) for the shared identity and theme store. Page data stays in local useState (docs/architecture.md, state row).
-- aggregateBy returns { series, total }, so a planned byTag.slice was corrected to byTag.series.slice in server/src/routes/admin.js.
-- AdminPage and Insights routes have no role guard. There is no auth backend; identity is carried by the x-user-id header and defaults to user 1. No in-app user switcher exists.
-- Pagination labels fixed to Prev / Next in client/src/components/Pagination.jsx.
+The private opencode and Codex sessions do not have a portable public chat URL. The short extracts below preserve the actual requests and the outputs that were adopted. The repository history and test suite are the corresponding output record.
 
-## Real conversation transcripts (verbatim prompts and responses)
+### 1. Exam review in opencode
 
-Per the exam's allowance to link a conversation with a chatbot, the prompts below were given to opencode verbatim during this build, with the assistant's actual responses and actions. The planning artifact at docs/superpowers/plans/2026-08-18-worksmart-full-build.md is gitignored from the submitted tree, so these embedded transcripts are the primary evidence.
+**Prompt**
 
-Prompt 1 (kickoff, master plan): Build WorkSmart per the 36-task plan for the Thinking Machines exam.
-Response: Generated docs/superpowers/plans/2026-08-18-worksmart-full-build.md (36 tasks across Foundations, Time tracking, Documents, GenAI, Admin, Deploy and Docs), then ran tasks 1 to 36 through subagent-driven development (one implementer and one reviewer per task). All commits are in the repo history.
+> can you properly convert the pdf to exam.txt so I can know the deliverables needed by the examiner
 
-Prompt 2 (reconciliation, real API): Reconcile Task 15 client to the real API, api/client.js does not exist.
-Response: Confirmed the client uses the existing client/src/api.js named functions (not the planned api/client.js); extended listDocuments to forward { page, pageSize, status, type }; corrected the plan and log to match reality.
+**Adopted result**
 
-Prompt 3 (GenAI engine): Implement Task 17, the mock GenAI engine.
-Response: Created server/src/services/genai.js with mockCategorize, mockAnalyzeDocument, mockSuggestWorkflow, mockSearch, mockTimeInsights, mockAnomalies, behind one swappable boundary; 9-test suite green. Rule-based mocks only (no real LLM).
+opencode extracted the working application, documentation, roadmap, presentation, privacy, collaborator, and AI-process requirements. That requirements summary became the basis of the implementation plan.
 
-Prompt 4 (deploy and tests, this session): Deploy locally via Docker and implement integration and E2E tests so I can see the system in action.
-Response: Fixed the server Dockerfile (alpine to bookworm-slim plus openssl for Prisma's glibc engine), added Playwright e2e (6 UI smoke tests plus 1 full API integration flow) with a root playwright.config.js, recaptured docs/screenshots, embedded them in docs/user-guide.md, and committed. Found and fixed a real bug: seeded SQLite user IDs started at 307, so authMiddleware's default userId = 1 pointed at a non-existent user and every create or update returned a 500 FK violation; resolved by reseeding.
+### 2. Initial implementation in opencode
 
-Prompt 5 (adversarial review, this session): Apply the first adversarial test result, plus the adversarial evaluation (P0: no deployed URL, weak AI-tool evidence; P1: no demo video).
-Response: Added the 5 required GitHub collaborators (read invites sent), embedded these real transcripts, corrected the overclaiming README and the false roadmap "accessible via URL" claim, and recorded a walkthrough demo video (docs/presentation/demo.webm). The public Render and Vercel URL stays pending the deploy step (configs server/render.yaml, client/vercel.json, docker-compose.yml are in place).
+**Prompt**
 
-## Notes for evaluators
+> Build WorkSmart per the 36-task plan for the Thinking Machines exam.
 
-- All GenAI product features in the app itself are deliberate mock implementations (rule-based), as the exam allows. See docs/genai-approach.md. They sit behind one service boundary (server/src/services/genai.js) so a real LLM can be swapped in later.
-- The tooling used to build the submission (opencode) is separate from the mock GenAI features shipped in the product.
-- Per exam rules, this repository is private and exam.txt is gitignored and never committed.
-- Conversation and session evidence: real prompts and the assistant's responses and actions are embedded above in the Real conversation transcripts section. No external chat link is required. The transcripts are self-contained in this file, which is part of the submitted tree.
+**Adopted result**
+
+opencode executed the plan in small tasks with implementation and review passes. It produced the first full-stack build and the initial documentation set. Where the plan disagreed with the repository, the code was corrected to match the real API and data shapes.
+
+### 3. Final engineering review in Codex
+
+**Prompt extract**
+
+> The outputs/walkthroughs are at the /output folder. What I want is for your higher intelligence than free models to critique and improve my code especially UI/UX for submission today.
+
+The same request specified React Atomic Design and a Node flow of routes/controllers to services or use cases, then repositories.
+
+**Adopted result**
+
+Codex reviewed the exam, plan, code, running UI, screenshots, and walkthroughs. It reorganized reusable React components, moved database work behind repositories, tightened validation, improved mobile and keyboard UX, and added regression tests.
+
+### 4. Scope confirmation in Codex
+
+**Prompt**
+
+> go ahead no need to create implementation plan as this was the source of truth in the implementation
+
+**Adopted result**
+
+Codex used `docs/superpowers/plans/2026-08-18-worksmart-full-build.md` as the implementation reference and did not replace it with a new plan.
+
+### 5. Adversarial review result
+
+The strongest finding was test isolation. Server tests originally shared `server/prisma/dev.db` with Docker and could clear the demo data. The fix now gives every test invocation its own disposable SQLite file. Two full server suites were run at the same time and both passed 75 tests without touching the development database.
+
+Other adopted findings included malformed IDs and dates returning 500 responses, incomplete mobile table labels, document status updates without failure feedback, and document list responses carrying unnecessary full text. Each was fixed and covered by tests or browser checks.
+
+## Final verification
+
+- Server tests: 75 passed. Two complete server suites also passed concurrently.
+- Client tests: 25 passed.
+- Playwright: 9 browser and API flows passed against the rebuilt Docker stack.
+- Production client build: passed.
+- Responsive audit: four pages checked at 390 px with no horizontal overflow.
+- Seed data after testing: 100 users, 7,535 hours, and 9 documents remained intact.
+
+## What remained a human decision
+
+- The product scope stays intentionally demo-grade: mock identity, deterministic GenAI, and seeded assessment data.
+- The public deployment requires the repository owner's Render and Vercel accounts. It is not presented as complete in this repository.
+- The owner remains responsible for reviewing the code, accepting the trade-offs, sending the final submission email, and explaining the work during evaluation.
+
+## Product AI versus development tooling
+
+The AI tools above helped create and review the submission. They are separate from the mock GenAI features demonstrated in WorkSmart. Product behaviour, mock rules, confidence labels, fallbacks, and the path to a real model are documented in `docs/genai-approach.md`.

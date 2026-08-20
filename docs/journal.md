@@ -17,7 +17,7 @@ Thought process, assumptions, and decisions recorded during the engagement.
 
 - Single API client (client/src/api.js), not api/client.js. The plan referenced api/client.js, which does not exist; the repo already had api.js with named functions, so the client was reconciled to that. Why: avoid a phantom module and keep one HTTP boundary.
 - Zustand app store for shared identity and theme. Why: only the mock user identity (x-user-id) and the theme are genuinely cross-page; page data stays in local useState. Confirmed in docs/architecture.md (state row).
-- Mock auth via the x-user-id header, no in-app switcher. The API reads x-user-id; when absent it defaults to user 1 (James Wong, admin). There is no UI identity switcher; callers and tests set the header directly. Why: the exam is UX-first and permits mocks; real auth and RBAC are deferred to the roadmap.
+- Mock auth via the x-user-id header and an in-app identity switcher. The API defaults to user 1 (James Wong, admin) when the header is absent. Why: the switcher makes multi-user flows easy to demonstrate, while real auth and RBAC remain outside this assessment's scope.
 - aggregateBy returns { series, total }. A planned byTag.slice was corrected to byTag.series.slice in server/src/routes/admin.js. Why: the function's actual return shape must be honored.
 - Rule-based GenAI behind one service boundary. All six AI features are deterministic mocks in server/src/services/genai.js, swappable for a real LLM later. Why: permitted by the exam and keeps a clean seam.
 - Admin and Insights routes are unguarded. With no auth backend, role checks live only in the seeded role field; the routes trust the x-user-id header. Why: consistency with the mock-auth model.
@@ -33,12 +33,13 @@ Thought process, assumptions, and decisions recorded during the engagement.
 
 - Node not on the default PATH. Used the nvm-provided Node at C:\Users\Admin\.nvm\versions\node\v24.19.0\bin, added to PATH per shell session.
 - SQLite user ID skew. After an early reseed, seeded user IDs started at 307, so authMiddleware's default userId = 1 pointed at a missing user and every create or update returned a 500 FK violation. Fixed by reseeding so IDs start at 1.
-- Playwright ran locally. The Docker stack was brought up, screenshots were captured with scripts/capture-screenshots.mjs and embedded in docs/user-guide.md, and the 7 Playwright specs (6 UI plus 1 API integration) pass against the live stack.
+- Playwright ran locally. The Docker stack was brought up, screenshots were captured with scripts/capture-screenshots.mjs and embedded in docs/user-guide.md, and all 9 Playwright UI/API specs pass against the live stack.
+- A final Codex review found that the first server test setup reused the Docker SQLite database. Tests now create a unique disposable database per run; two complete suites pass concurrently without changing the demo data.
 - Plan bugs found and fixed during the build. api/client.js non-existence, the Zustand-store assumption, byTag.slice to byTag.series.slice, and the missing role-guard reality were reconciled against the actual implementation.
 
 ## Entry 6 — Final status
 
-- Application complete: 49 server tests and 14 client tests green, client build OK.
+- Application complete: 75 server tests and 25 client tests green, client build OK.
 - Documentation complete: product-vision, architecture (plus diagram), roadmap, genai-approach, api, user-guide, ai-usage-log, and this journal.
-- Docker verified running locally: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing (7 Playwright specs). Deploy is a manual Render (server) plus Vercel (client) step; the dedicated deploy-config task (35) finalizes hosted deployment, and the public URL is pending that step.
+- Docker verified running locally: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing 9 Playwright specs. Deploy is a manual Render (server) plus Vercel (client) step, and the public URL is pending that account-owned step.
 - Demo video recorded: docs/presentation/demo.webm (under 5 minutes), walking through the six GenAI touchpoints.

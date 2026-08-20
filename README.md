@@ -12,18 +12,18 @@ This README indexes every deliverable the exam asks for. Each file is linked her
 | --- | --- |
 | Deployed App | Local Docker verified (client :8080, API :4000). Public URL pending. See Deployment. |
 | Source Code (GitHub, private) | this repository |
-| Demo Video (under 5 min) | docs/presentation/demo.webm (script: docs/presentation/demo-script.md) |
-| Slides (5 or fewer) | docs/presentation/slides.md |
-| Product Vision (2 to 3 pages) | docs/product-vision.md |
-| Product Roadmap (1 to 2 pages) | docs/roadmap.md |
-| Architecture Diagram + Decisions | docs/architecture.md and docs/architecture-diagram.md |
-| Mock GenAI Implementation Notes | docs/genai-approach.md |
-| User Guide (with screenshots) | docs/user-guide.md |
-| API Reference | docs/api.md |
-| AI Tool Usage Log (prompts and outputs) | docs/ai-usage-log.md |
-| Project Journal | docs/journal.md |
+| Demo Video (under 5 min) | [demo.webm](docs/presentation/demo.webm) ([script](docs/presentation/demo-script.md)) |
+| Slides (5 or fewer) | [slides.md](docs/presentation/slides.md) |
+| Product Vision (2 to 3 pages) | [product-vision.md](docs/product-vision.md) |
+| Product Roadmap (1 to 2 pages) | [roadmap.md](docs/roadmap.md) |
+| Architecture Diagram + Decisions | [architecture.md](docs/architecture.md) and [architecture-diagram.md](docs/architecture-diagram.md) |
+| Mock GenAI Implementation Notes | [genai-approach.md](docs/genai-approach.md) |
+| User Guide (with screenshots) | [user-guide.md](docs/user-guide.md) |
+| API Reference | [api.md](docs/api.md) |
+| AI Tool Usage Log (prompts and outputs) | [ai-usage-log.md](docs/ai-usage-log.md) |
+| Project Journal | [journal.md](docs/journal.md) |
 
-Transparency: the prompts sent to the AI coding tool and the outputs it produced are logged with real transcripts in docs/ai-usage-log.md (section "Real conversation transcripts"), as the exam requires.
+Transparency: representative prompts, adopted outputs, corrections, and final checks from opencode and Codex are recorded in docs/ai-usage-log.md.
 
 ## Overview
 
@@ -66,10 +66,10 @@ All GenAI features are mocks, as the exam allows ("you are NOT required to imple
 | Layer | Choice | Why |
 | --- | --- | --- |
 | Frontend | React (Vite, JavaScript not TypeScript) and Tailwind CSS v4 | Required by spec. Vite for fast dev and build. Tailwind v4 (CSS-first @theme, tokens in client/src/styles.css) for one design system. |
-| State | React component-local state (no global store) | The planned Zustand store was dropped during build. The app uses local useState and one api.js client, which keeps the client simple and the api.js boundary easy to swap. |
+| State | Zustand for identity/theme; component-local request state | Only truly cross-page state is global. Page data stays request-scoped. |
 | Backend | Node.js and Express | Same language as the frontend. Minimal setup. |
-| Database | SQLite via Prisma, with a Postgres path for deploy | Zero local setup with SQLite. Prisma makes the swap trivial. |
-| Deployment | Vercel (frontend) and Render (backend plus Postgres) | Fast zero-config deploys on free tiers. |
+| Database | SQLite via Prisma | Zero local setup; Docker and Render use a persistent database volume. |
+| Deployment | Vercel frontend and Render Docker API with persistent disk | Matches the tested SQLite schema without an unverified provider swap. |
 | GenAI (mocked) | Rule-based fixtures and keyword matches | Deterministic mocks. No external APIs. |
 
 Full rationale is in docs/architecture.md.
@@ -81,14 +81,16 @@ worksmart/
 ├── client/                 # React frontend (Vite)
 │   ├── src/
 │   │   ├── api.js          # single API client (VITE_API_URL-aware)
-│   │   ├── pages/          # CheckIns, Analytics, Documents, DocumentDetail, Search, Home (dashboard), Admin
-│   │   └── components/     # Pagination, StatusBadge, TagPill, InsightCard, AnomalyBanner, TimeChart
+│   │   ├── pages/          # route-level data orchestration
+│   │   ├── components/     # Atomic Design: atoms, molecules, organisms, templates
+│   │   └── store/          # Zustand identity and theme state
 │   ├── Dockerfile
 │   └── nginx.conf
 ├── server/                 # Express API
 │   ├── src/
-│   │   ├── routes/         # checkins, analytics, users, documents, ai, admin
-│   │   ├── services/       # parser, analytics, genai (mock engine)
+│   │   ├── routes/         # HTTP controllers and URI plumbing
+│   │   ├── services/       # business use cases and response shaping
+│   │   ├── repositories/   # all Prisma/data access
 │   │   └── middleware/      # auth (x-user-id), error
 │   ├── prisma/             # schema and SQLite dev db
 │   ├── Dockerfile
@@ -117,7 +119,7 @@ npm --prefix client install
 cp server/.env.example server/.env   # DATABASE_URL defaults to local SQLite
 
 npm run migrate     # npx prisma db push
-npm run seed        # 100 users and 2,000+ check-ins, 9 documents
+npm run seed        # seeds only an empty DB; add -- --force for an intentional reset
 ```
 
 Run locally
@@ -135,33 +137,33 @@ docker compose up --build
 
 Run tests
 ```bash
-npm --prefix server test    # 49 tests
-npm --prefix client test    # 14 tests
+npm --prefix server test    # 75 tests on a per-run isolated disposable test DB
+npm --prefix client test    # 25 tests
 npm --prefix client run build
-npm run test:e2e            # Playwright E2E plus API integration (needs Docker stack running)
+npm run test:e2e            # 9 Playwright UI/API specs (needs Docker stack running)
 ```
 
 ## Deployment
 
-The app is containerized and ships with Render plus Vercel config so it can be reached at a public URL (exam requirement: "The application should be accessible via a URL").
+The app is containerized and ships with Render plus Vercel config. Publishing still requires the repository owner's Render/Vercel accounts and produces the public URL required by the exam.
 
-- server/render.yaml. Render web service and free Postgres blueprint.
+- server/render.yaml. Render Docker web service with a persistent SQLite disk.
 - client/vercel.json. Vercel build and output config. Set VITE_API_URL to the Render API URL.
 - docker-compose.yml. One-command local deployment.
-- The SQLite to Postgres swap is documented in docs/architecture.md and server/.env.production.example.
+- The server startup applies the Prisma schema and runs a non-destructive seed: existing data is never replaced unless `npm run seed -- --force` is explicitly used.
 
-The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with npm run test:e2e passing (7 Playwright specs).
+The live public URL (Render plus Vercel) will be added to the Quick Links table once the manual deploy runs. The containerized app is verified running locally via Docker: client at http://localhost:8080, API at http://localhost:4000, with `npm run test:e2e` passing 9 Playwright specs.
 
 ## GenAI Tooling Disclosure
 
-This submission's planning, code scaffolding, and documentation were assisted by opencode, an AI coding agent. Prompts and outputs are logged in docs/ai-usage-log.md (with links and screenshots of the working conversation), per the exam's transparency requirement.
+opencode assisted with the first implementation. OpenAI Codex Desktop handled the final engineering review, debugging, UI work, and documentation pass. The tools, representative prompts, adopted outputs, corrections, and verification evidence are recorded in docs/ai-usage-log.md.
 
 ## Assumptions Made
 
-- Multi-user. No real auth was built (UX-first scope). Identity travels in the x-user-id HTTP header. The API defaults to user 1 (James Wong, admin) when the header is absent. There is no in-app user switcher; callers and tests set x-user-id directly. Documented in docs/api.md.
+- Multi-user. No real auth was built (UX-first scope). The login screen is a mock user switcher; identity travels in the `x-user-id` HTTP header and the API defaults to seeded user 1 when absent. Documented in docs/api.md.
 - Departments. Seeded string list (Procurement, Engineering, Finance, Operations, Sales, HR) until an admin-managed org structure is scoped.
 - Check-in tags. Free-form strings normalized to lowercase. Missing tags default to general and are eligible for Smart Categorization.
-- Document text. Uploaded files are read as UTF-8 text for mock analysis. Binary files fall back to filename or title based extraction.
+- Document text. TXT, Markdown, CSV, JSON, and LOG files up to 5 MB are retained as UTF-8 text for mock analysis. Unsupported binary formats are rejected clearly rather than silently discarded.
 - Data volume. Seeded with 100 users and 2,000+ check-ins. This clears the 100+ users and 1,000+ entries bar out of the box.
 - GenAI. All six GenAI features are deterministic mocks behind server/src/services/genai.js, built to be swapped for a real LLM later.
 
@@ -191,16 +193,16 @@ Short-term (3 to 6 months), medium-term (6 to 12 months), and long-term (12+ mon
 | Bonus: admin analytics | client/src/pages/AdminPage.jsx and /api/admin/analytics |
 | Bonus: Dockerize | docker-compose.yml and Dockerfiles |
 | Bonus: procurement workflows | document upload, status, linking, and suggestions |
-| Bonus: extendable architecture | Document.type enum, contentText and analysis fields. See docs/genai-approach.md |
+| Bonus: extendable architecture | Validated document type contract, contentText and analysis fields. See docs/genai-approach.md |
 | Bonus: error handling | server/src/middleware/error.js and server/tests/error.test.js |
 | Bonus: project journal | docs/journal.md |
-| Bonus: test coverage | 49 server tests and 14 client tests |
+| Bonus: test coverage | 75 server tests and 25 client tests, plus 9 Playwright specs |
 | Bonus: API documentation | docs/api.md |
 
 ## Submission Notes
 
 - Repository is private. exam.txt is gitignored and not committed (per exam instructions not to leak the brief).
-- Repository is shared privately with: mamerisawesome, tm-chester-supelana, butchtm, tm-jase-evangelista, tm-glenn.
+- Repository access is private. Read access is accepted by tm-chester-supelana; invitations are pending for mamerisawesome, butchtm, tm-jase-evangelista, and tm-glenn.
 - All written deliverables are linked from this README (the exam's "index all your files in one document" requirement).
-- Submitted to hiring@thinkingmachin.es (email stops the 72-hour timer).
+- Final submission step: email the deliverables link to hiring@thinkingmachin.es to stop the timer.
 - Author: Christian Andrada. Submitted in-character as a Thinking Machines software engineer.

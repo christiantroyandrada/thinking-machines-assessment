@@ -2,17 +2,17 @@
 
 Recording note: a walkthrough video is recorded at docs/presentation/demo.webm (under 5 minutes). The repository is private. The script below is the shot list used to record it. Recommended tool if re-recording: Loom or OBS for screen and voice capture.
 
-Identity reconciliation: there is no login UI. The app opens directly. Identity is supplied by the x-user-id HTTP header, which defaults to user 1, James Wong (admin). In the demo the default admin identity is used, so no sign-in step occurs.
+Identity is deliberately mocked. Start by choosing James Wong (admin) from the identity picker. The client then sends his ID through the x-user-id header. This is a demo convenience, not production authentication.
 
 ## Beat 1 — Open the app (0:00 to 0:30)
 
 - URL: deployed URL, or http://localhost:8080 (dev).
-- Click path: just open the link, you land on the Dashboard immediately.
-- Talking point: WorkSmart opens straight to the dashboard, no login screen. Identity is the x-user-id header, defaulting to our admin, James Wong, so the demo is frictionless.
+- Click path: open the link, choose James Wong (admin), and land on the Dashboard.
+- Talking point: the identity picker makes multi-user and admin views easy to demonstrate without pretending this is production authentication.
 
 ## Beat 2 — Check-ins with a smart tag (0:30 to 1:15)
 
-- URL or path: /checkins
+- URL or path: /check-ins
 - Click path: Navigate to Check-ins, enter "2 hrs vendor negotiation and quote review", toggle smart tag on, submit.
 - Talking point: The parser reads free text; the mock GenAI suggests a tag (for example procurement). This is touchpoint 1, smart categorization.
 

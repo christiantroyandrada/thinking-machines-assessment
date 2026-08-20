@@ -1,12 +1,12 @@
 # GenAI Approach — Mock Implementation and Real-LLM Mapping
 
-Exam deliverable 2. This document describes the current mock GenAI engine that powers WorkSmart and how each feature would be swapped for a real LLM without touching the API routes or the React UI. The mock engine lives in server/src/services/genai.js as a set of pure functions with stable contracts. The boundary rationale (why the engine is isolated) is in docs/architecture.md section 5. This document is the per-feature companion, not a copy of it.
+Exam deliverable 2. This document describes the current mock GenAI engine and a practical route to a real provider. The mock engine lives in server/src/services/genai.js as a set of pure functions with stable response contracts. A real provider can keep the API and React response shapes, but the server call sites must become asynchronous and add timeouts, fallback handling, and provider configuration. The boundary rationale is in docs/architecture.md section 5.
 
 All mocks are deterministic, need no external API, and return a source field (mock-keyword-rule, mock-extraction-rule, and so on) so the UI can label their provenance and so a real provider can be detected at runtime.
 
 ## Feature 1 — Smart Categorization (categorize)
 
-UX touchpoint. client/src/components/CheckInForm.jsx. The check-in form has a checkbox labeled "Smart tag this entry (AI)". When checked and no explicit tag is given, the client sends useSmartTag: true with the free-text activity, and server/src/routes/checkins.js:71 calls mockCategorize(...) to pick the tag before saving the check-in. The chosen tag shows in the TagPill before submit.
+UX touchpoint. client/src/components/CheckInForm.jsx. The check-in form has a checkbox labeled "Smart tag this entry (AI)". When checked and no explicit tag is given, the client sends useSmartTag: true with the free-text activity, and the check-in service calls mockCategorize(...) before saving the entry.
 
 Mock rule. A keyword table TAG_KEYWORDS maps eight tags (procurement, project-x, design, meeting, finance, support, ops, general) to trigger words. mockCategorize(text):
 1. lower-cases the input,
@@ -187,14 +187,14 @@ Concern (flagged). Insights (InsightCard) and Anomalies (AnomalyBanner) do not c
 
 ## Swap Strategy
 
-The mocks were built behind one deliberate seam so a real LLM can replace them without touching any route or component:
+The mocks sit behind one service module. The response contracts can stay stable, but a production provider still needs deliberate server work:
 
-1. Single service boundary. All six features are pure functions in server/src/services/genai.js. The routes (ai.js, documents.js, checkins.js) and the React client depend only on the return shapes, never the internals. Swapping means rewriting function bodies (or pointing them at a provider). Routes and UI stay put.
+1. Service boundary. All six features are pure functions in server/src/services/genai.js. Application services consume their return shapes, while routes and the React client consume the resulting JSON contracts.
 2. Feature flags. Gate each provider behind a config flag, for example GENAI_PROVIDER=categorize:llm,analyze:llm,search:mock or a single USE_REAL_LLM toggle per feature. This lets features go live one at a time and revert instantly if a provider misbehaves.
-3. Provider abstraction. Add a GenAIProvider interface with MockProvider (today's functions) and LLMProvider (OpenAI or Anthropic) behind the existing boundary. architecture.md section 6 already names this GenAIProvider seam. The client and route call sites are unchanged. Only the provider injected into genai.js differs.
+3. Provider abstraction. Add a GenAIProvider interface with MockProvider (today's functions) and LLMProvider (OpenAI or Anthropic). Make the provider methods asynchronous, then update the application services to await them. The route URLs, response shapes, and React rendering can remain stable.
 4. Evaluation harness (golden set). Keep server/tests/genai.test.js (already present) plus a curated golden dataset of check-ins and documents with expected tags, fields, intents, insights, and anomalies. Add a script that runs both MockProvider and LLMProvider against the golden set and reports precision or recall or exact-match diffs. This is the regression gate that proves the real LLM is at least as good as the mock before a flag flips to llm in production.
-5. Latency and resilience by design. Every call site already has a loading state ("Analyzing...", "Thinking...", "..."). The mapping above pairs each feature with a deterministic fallback so the app degrades to the mock rule engine on any provider error or timeout. The UI never blocks on the model.
+5. Latency and resilience. The UI already has loading states. A real integration must add server-side timeouts, cancellation, retry limits, and deterministic fallback rules so a provider failure does not leave a request open indefinitely.
 
 ## Scope
 
-Documentation only. No code, tests, or behavior changed by this deliverable. The mock logic described above was read directly from server/src/services/genai.js, server/src/routes/ai.js, server/src/routes/documents.js, server/src/routes/checkins.js, and the client components CheckInForm, AnalysisCard, SuggestionList, SearchPage, InsightCard, and AnomalyBanner.
+The mock logic described above was checked against server/src/services/genai.js, the application services and routes, and the client components CheckInForm, AnalysisCard, SuggestionList, SearchPage, InsightCard, and AnomalyBanner.

@@ -1,19 +1,19 @@
 # Meridian — User Guide
 
 A practical, click-by-click guide to the everyday workflows in WorkSmart (Meridian).
-The app has no login screen. It renders immediately, so you start on the
-dashboard and navigate with the top bar.
+The app starts with a mock identity picker. Choose a seeded user, then use the
+left sidebar to move between workflows.
 
 > **Screenshots:** Each workflow below includes a real screenshot captured from
 > the running app (`docs/screenshots/*.png`, produced by
 > `scripts/capture-screenshots.mjs` driving Playwright against the local Docker
-> stack). The app has no login screen. It renders immediately.
+> stack).
 
 ---
 
 ## 1. Logging a check-in
 
-**Where:** top bar → **Check-ins** (or the form is also on the dashboard area).
+**Where:** sidebar → **Check-ins**.
 
 1. Open **Check-ins**. You'll see a "Log a check-in" card near the top.
 2. Type your entry in the free-text format, e.g.
@@ -30,9 +30,9 @@ dashboard and navigate with the top bar.
 
 ## 2. Viewing, filtering, editing, and deleting check-ins
 
-![Check-ins list](docs/screenshots/checkins.png)
+![Check-ins list](screenshots/checkins.png)
 
-**Where:** top bar → **Check-ins**.
+**Where:** sidebar → **Check-ins**.
 
 1. Every entry is listed as a line: `<hours>h #tag · activities, user (department)`,
    with **Delete** and **Edit** buttons beside it.
@@ -48,9 +48,9 @@ dashboard and navigate with the top bar.
 
 ## 3. Viewing analytics by tag, date, department, and user
 
-![Analytics](docs/screenshots/analytics.png)
+![Analytics](screenshots/analytics.png)
 
-**Where:** top bar → **Analytics**.
+**Where:** sidebar → **Analytics**.
 
 1. The page loads three sections:
    - **Hours by tag:** a list of tags with their total hours.
@@ -66,9 +66,9 @@ dashboard and navigate with the top bar.
 
 ## 4. Uploading a procurement document and moving it through the status flow
 
-![Documents](docs/screenshots/documents.png)
+![Documents](screenshots/documents.png)
 
-**Where:** top bar → **Documents**.
+**Where:** sidebar → **Documents**.
 
 1. On the **Documents** page, use the **Upload** form: choose a type
    (`PO`, `QUOTE`, `REQ`, `OTHER`), optionally give it a title, and pick the
@@ -105,9 +105,9 @@ dashboard and navigate with the top bar.
 
 ## 6. Asking the AI search
 
-![AI search](docs/screenshots/search.png)
+![AI search](screenshots/search.png)
 
-**Where:** top bar → **Search**.
+**Where:** sidebar → **AI Search**.
 
 1. On the **AI Search** page, type a plain-English question, e.g.
    `"how much time on procurement this month?"`.
@@ -120,9 +120,9 @@ dashboard and navigate with the top bar.
 
 ## 7. Dashboard insights, anomaly banners, and team analytics
 
-![Dashboard](docs/screenshots/dashboard.png) ![Admin team analytics](docs/screenshots/admin.png)
+![Dashboard](screenshots/dashboard.png) ![Admin team analytics](screenshots/admin.png)
 
-**Where:** top bar → **Home** (dashboard) and **Admin**.
+**Where:** sidebar → **Dashboard** and **Admin**.
 
 ### Dashboard (Home)
 1. The home page opens with a **stat cards grid**: `hrs logged`, `documents`,

@@ -1,15 +1,12 @@
 services:
   - type: web
     name: worksmart-api
-    env: node
+    env: docker
     rootDir: server
-    buildCommand: npm install && npx prisma generate && npx prisma db push
-    startCommand: npm start
     envVars:
       - key: DATABASE_URL
-        fromDatabase:
-          name: worksmart-db
-          property: connectionString
-databases:
-  - name: worksmart-db
-    plan: free
+        value: file:/var/data/worksmart.db
+    disk:
+      name: worksmart-data
+      mountPath: /var/data
+      sizeGB: 1

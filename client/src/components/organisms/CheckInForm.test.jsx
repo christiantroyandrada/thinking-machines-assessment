@@ -8,7 +8,7 @@ vi.mock('../../api.js', () => ({
 }));
 
 describe('CheckInForm smart tag', () => {
-  it('shows a smart-tag hint when tag is general', async () => {
+  it('shows a smart-tag hint when the parser returns general', async () => {
     render(<CheckInForm onCreated={() => {}} />);
     fireEvent.change(screen.getByPlaceholderText(/vendor negotiation/i), { target: { value: '2 hrs vendor negotiation' } });
     await waitFor(() => expect(screen.getByText(/smart tag/i)).toBeInTheDocument());

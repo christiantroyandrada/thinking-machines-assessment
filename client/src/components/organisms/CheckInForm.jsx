@@ -38,18 +38,18 @@ export default function CheckInForm({ onCreated }) {
 
   return (
     <form className="card checkin-form" onSubmit={submit}>
-      <label htmlFor="checkin-text">Log a check-in <span className="checkin-example">Example: <code>5.5 hrs #project-x fix login issue</code></span></label>
+      <label htmlFor="checkin-text">Log a check-in <span className="checkin-form__example">Example: <code>5.5 hrs #project-x fix login issue</code></span></label>
       <div className="row">
         <input id="checkin-text" value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. 2 hrs vendor negotiation for procurement" />
         <button type="submit" disabled={saving || !text.trim()}>{saving ? 'Saving…' : 'Log it'}</button>
       </div>
       {preview && (
-        <div className="parse-preview">
+        <div className="checkin-form__preview">
           {preview.valid ? (
             <span>
               <span className="tag-pill">{preview.hours} hr · #{preview.tag}</span>
               {showSmart && (
-                <label className="smart-tag">
+                <label className="checkin-form__smart-tag">
                   <input type="checkbox" checked={useSmartTag} onChange={(e) => setUseSmartTag(e.target.checked)} />
                   Smart tag this entry (AI)
                 </label>

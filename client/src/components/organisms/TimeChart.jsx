@@ -7,7 +7,7 @@ const COMPACT_LIMIT = 12;
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="chart-tooltip">
+    <div className="time-chart__tooltip">
       <span>{label}</span>
       <strong>{formatHours(payload[0].value)}</strong>
     </div>
@@ -31,7 +31,7 @@ export default function TimeChart({ dimension, series }) {
   if (dimension === 'date') {
     return (
       <div className="time-chart">
-        <div className="time-chart-plot" aria-hidden="true">
+        <div className="time-chart__plot" aria-hidden="true">
           <ResponsiveContainer width="100%" height={320}>
             <LineChart data={data} margin={{ top: 16, right: 12, bottom: 4, left: -12 }}>
               <CartesianGrid stroke="var(--color-line)" vertical={false} />
@@ -54,9 +54,9 @@ export default function TimeChart({ dimension, series }) {
   return (
     <div className="time-chart">
       {hiddenCount > 0 && (
-        <p className="chart-scope">{showAll ? `Showing all ${data.length}` : `Showing top ${COMPACT_LIMIT} of ${data.length}`}</p>
+        <p className="time-chart__scope">{showAll ? `Showing all ${data.length}` : `Showing top ${COMPACT_LIMIT} of ${data.length}`}</p>
       )}
-      <div className={`time-chart-plot time-chart-plot-desktop${showAll ? ' is-hidden' : ''}`} aria-hidden="true">
+      <div className={`time-chart__plot time-chart__plot--desktop${showAll ? ' time-chart__plot--hidden' : ''}`} aria-hidden="true">
         <ResponsiveContainer width="100%" height={320}>
           <BarChart data={plotData} margin={{ top: 16, right: 12, bottom: 4, left: -12 }}>
             <CartesianGrid stroke="var(--color-line)" vertical={false} />
@@ -67,22 +67,22 @@ export default function TimeChart({ dimension, series }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <ul className={`compact-time-chart${showAll ? ' is-expanded' : ''}`} aria-label={`Time by ${dimension} chart`}>
+      <ul className={`time-chart__compact${showAll ? ' time-chart__compact--expanded' : ''}`} aria-label={`Time by ${dimension} chart`}>
         {compactData.map((entry) => (
           <li key={entry.name}>
-            <div className="compact-chart-label">
+            <div className="time-chart__label">
               <span>{entry.name}</span>
               <strong>{formatHours(entry.hours)}</strong>
             </div>
-            <div className="compact-chart-track" aria-hidden="true">
+            <div className="time-chart__track" aria-hidden="true">
               <span style={{ '--chart-value': `${(entry.hours / maxHours) * 100}%` }} />
             </div>
           </li>
         ))}
       </ul>
       {hiddenCount > 0 && (
-        <div className="compact-chart-more">
-          <button type="button" className="btn-ghost" onClick={() => setShowAll((visible) => !visible)}>
+        <div className="time-chart__more">
+          <button type="button" className="button--ghost" onClick={() => setShowAll((visible) => !visible)}>
             {showAll ? `Show top ${COMPACT_LIMIT}` : `Show ${hiddenCount} more`}
           </button>
         </div>

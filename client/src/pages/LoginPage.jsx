@@ -22,13 +22,13 @@ export default function LoginPage() {
 
   return (
     <div className="login">
-      <div className="card login-card">
+      <div className="card login__card">
         <h1>WorkSmart</h1>
         <p>Choose your identity to continue (mock sign-in).</p>
         {error && <p className="error-text">{error}</p>}
-        <div className="user-list">
+        <div className="login__user-list">
           {demo.map((u) => (
-            <button key={u.id} className="user-row" onClick={() => choose(u)}>
+            <button key={u.id} className="login__user" onClick={() => choose(u)}>
               <span>{u.name}</span>
               <span className="muted">{u.department} · {u.role}</span>
             </button>

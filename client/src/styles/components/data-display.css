@@ -1,0 +1,139 @@
+﻿@layer components {
+  /* ---------- Tables ---------- */
+  .data-table, .analytics table { @apply w-full border-collapse text-[0.9rem]; }
+  .data-table th, .analytics table th {
+    @apply text-left font-mono font-semibold text-muted;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 0.75rem 0.75rem; border-bottom: 2px solid var(--color-line-strong);
+  }
+  .data-table td, .analytics table td {
+    padding: 0.75rem 0.75rem; border-bottom: 1px solid var(--color-line);
+    vertical-align: middle;
+  }
+  .data-table tbody tr, .analytics table tbody tr {
+    transition: background 0.12s ease;
+  }
+  .data-table tbody tr:hover, .analytics table tbody tr:hover {
+    @apply bg-surface-2;
+  }
+  .data-table tbody tr:nth-child(even), .analytics table tbody tr:nth-child(even) {
+    background: color-mix(in oklch, var(--color-surface-2) 40%, var(--color-surface));
+  }
+  .data-table tbody tr:nth-child(even):hover, .analytics table tbody tr:nth-child(even):hover {
+    @apply bg-surface-2;
+  }
+  .data-table td:last-child, .analytics table td:last-child { text-align: right; }
+  .record-actions { display: inline-flex; gap: 0.35rem; white-space: nowrap; }
+  .record-actions button { padding: 0.5rem 0.8rem; font-size: 0.82rem; }
+
+  /* ---------- Check-in list ---------- */
+  .checkins ul { @apply list-none p-0 flex flex-col gap-2; margin-top: 1rem; }
+  .checkins li {
+    @apply flex items-center gap-3 flex-wrap bg-surface border border-line rounded-sm;
+    padding: 0.75rem 1rem;
+    animation: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: transform 0.12s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  }
+  .checkins li:hover {
+    border-color: var(--color-line-strong);
+    box-shadow: var(--shadow-soft);
+  }
+  .checkins li strong { @apply font-display; font-variant-numeric: tabular-nums; }
+  .checkins li .muted { margin-left: auto; }
+  .checkins li .checkin-actions {
+    @apply flex gap-2 ml-auto;
+  }
+  .checkins li .checkin-actions button {
+    @apply text-xs px-2.5 py-1.5 border-line text-ink-2;
+  }
+  .checkins li .checkin-actions button:hover {
+    @apply border-accent text-accent-strong;
+  }
+
+  /* ---------- Status badges & tag pill ---------- */
+  .status-badge {
+    @apply inline-block font-bold capitalize border;
+    padding: 2px 10px; border-radius: var(--radius-pill); font-size: 0.72rem;
+    letter-spacing: 0.02em;
+  }
+  .status-badge--pending  { background: var(--color-pending);  color: var(--color-pending-fg);  border-color: color-mix(in oklch, var(--color-pending-fg) 30%, transparent); }
+  .status-badge--review   { background: var(--color-review);   color: var(--color-review-fg);   border-color: color-mix(in oklch, var(--color-review-fg) 30%, transparent); }
+  .status-badge--approved { background: var(--color-approved); color: var(--color-approved-fg); border-color: color-mix(in oklch, var(--color-approved-fg) 30%, transparent); }
+  .status-badge--rejected { background: var(--color-rejected); color: var(--color-rejected-fg); border-color: color-mix(in oklch, var(--color-rejected-fg) 30%, transparent); }
+
+  .tag-pill {
+    @apply inline-block font-mono font-medium text-ink bg-surface-2 border border-line;
+    font-size: 0.78rem; padding: 2px 9px; border-radius: var(--radius-pill);
+    transition: background 0.12s ease, border-color 0.12s ease;
+  }
+  .tag-pill:hover {
+    @apply bg-surface-3 border-line-strong;
+  }
+
+  /* ---------- Suggestions ---------- */
+  .suggestions { @apply list-none p-0 flex flex-col gap-3; margin-top: 1rem; }
+  .suggestions li {
+    @apply flex items-start gap-3;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .suggestions li:last-child { border-bottom: none; }
+  .search-result { align-items: center; }
+  .search-result__kind {
+    @apply inline-flex items-center justify-center bg-surface-2 border border-line rounded-sm font-mono font-bold text-ink-2;
+    min-width: 3rem; min-height: 2rem; padding: 0.25rem 0.5rem; font-size: 0.72rem;
+  }
+  .search-result__title { @apply font-semibold text-ink; }
+  .search-result__meta { @apply flex items-center gap-2 text-muted; margin: 0.25rem 0 0; font-size: 0.82rem; }
+  .prio {
+    @apply font-mono font-semibold; font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 3px 8px; border-radius: 6px; margin-top: 2px;
+    white-space: nowrap;
+  }
+  .prio-high { background: var(--color-danger-bg); color: var(--color-danger-fg); }
+  .prio-medium { background: var(--color-pending); color: var(--color-pending-fg); }
+  .prio-low { background: var(--color-surface-2); color: var(--color-ink-2); }
+
+  /* ---------- Key/value (document analysis) ---------- */
+  .kv { @apply grid; grid-template-columns: 150px 1fr; gap: 0.5rem 1rem; margin-top: 1rem; }
+  .kv dt { @apply text-muted capitalize; font-size: 0.85rem; font-weight: 500; }
+  .kv dd { @apply font-medium; margin: 0; }
+
+  /* ---------- AI answer ---------- */
+  .ai-answer {
+    background: var(--color-accent-soft);
+    border: 1px solid color-mix(in oklch, var(--color-accent) 30%, var(--color-line));
+    border-radius: var(--radius-card); padding: 1rem 1.25rem;
+  }
+  .ai-answer strong { @apply font-mono text-accent-strong; letter-spacing: 0.02em; }
+
+  /* ---------- Smart tag / parse preview ---------- */
+  .checkin-form__smart-tag { @apply inline-flex items-center gap-2 text-accent-strong font-semibold; font-size: 0.85rem; cursor: pointer; }
+  .checkin-form__smart-tag input { accent-color: var(--color-accent); }
+  .checkin-form__preview { @apply flex items-center gap-3 flex-wrap; font-size: 0.9rem; margin-top: 0.75rem; }
+
+  /* ---------- Empty state ---------- */
+  .empty-state {
+    @apply text-center bg-surface border border-dashed;
+    padding: 3rem 1.25rem; border-radius: var(--radius-card);
+    border-color: var(--color-line-strong);
+  }
+  .empty-state .muted { margin-top: 0.5rem; }
+
+  /* ---------- Segmented control (document status) ---------- */
+  .segmented {
+    @apply inline-flex gap-0.5 p-[3px] bg-surface-2 border border-line rounded-pill;
+  }
+  .segmented__option {
+    @apply border-0 bg-transparent text-ink-2 font-semibold; font-size: 0.82rem;
+    min-height: 2.75rem; padding: 0.5rem 1rem; border-radius: var(--radius-pill); cursor: pointer;
+    white-space: nowrap; transition: all 0.15s ease;
+  }
+  .segmented__option:hover { @apply text-ink; }
+  .segmented__option--active { @apply bg-accent text-accent-ink shadow-soft; }
+
+  /* ---------- Pagination ---------- */
+  .pagination { @apply flex items-center gap-4 mt-5 justify-center; }
+  .pagination span { @apply font-mono text-muted; font-size: 0.8rem; }
+
+}

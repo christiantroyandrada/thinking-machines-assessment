@@ -39,7 +39,7 @@ describe('TimeChart', () => {
     const rows = screen.getAllByRole('listitem');
     rows.forEach((row) => {
       expect(within(row).getByText('0 hrs')).toBeInTheDocument();
-      expect(row.querySelector('.compact-chart-track span')).toHaveStyle({ '--chart-value': '0%' });
+      expect(row.querySelector('.time-chart__track span')).toHaveStyle({ '--chart-value': '0%' });
     });
   });
 
@@ -49,14 +49,14 @@ describe('TimeChart', () => {
 
     expect(screen.getByText('Showing top 12 of 14')).toBeInTheDocument();
     const showMore = screen.getByRole('button', { name: 'Show 2 more' });
-    expect(showMore.closest('.compact-time-chart')).toBeNull();
+    expect(showMore.closest('.time-chart__compact')).toBeNull();
     expect(screen.queryByText('User 14')).not.toBeInTheDocument();
 
     fireEvent.click(showMore);
     expect(screen.getByText('User 14')).toBeInTheDocument();
     expect(screen.getByText('Showing all 14')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Show top 12' })).toBeInTheDocument();
-    expect(screen.getByRole('list', { name: 'Time by user chart' })).toHaveClass('is-expanded');
-    expect(document.querySelector('.time-chart-plot-desktop')).toHaveClass('is-hidden');
+    expect(screen.getByRole('list', { name: 'Time by user chart' })).toHaveClass('time-chart__compact--expanded');
+    expect(document.querySelector('.time-chart__plot--desktop')).toHaveClass('time-chart__plot--hidden');
   });
 });

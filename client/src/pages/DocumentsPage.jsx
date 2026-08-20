@@ -30,7 +30,7 @@ export default function DocumentsPage() {
       {error && <div className="error-banner" role="alert">{error}</div>}
       <UploadForm onUploaded={refreshAfterUpload} />
       <div className="filter-bar">
-        <span className="filter-label">Filters</span>
+        <span className="filter-bar__label">Filters</span>
         <label className="sr-only" htmlFor="document-status-filter">Status filter</label>
         <select id="document-status-filter" value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
           <option value="">All statuses</option>

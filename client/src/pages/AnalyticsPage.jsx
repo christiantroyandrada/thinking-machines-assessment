@@ -24,22 +24,22 @@ export default function AnalyticsPage() {
     <section className="analytics stack">
       <h2>Analytics</h2>
       {error && <div className="error-banner">{error}</div>}
-      <div className="card analytics-card">
+      <div className="card analytics__card">
         <div className="row-between">
           <h3>Time spent</h3>
           <div className="segmented" role="group" aria-label="analytics dimension">
             {DIMENSIONS.map((d) => (
-              <button key={d.value} className={dimension === d.value ? 'active' : ''} aria-pressed={dimension === d.value} onClick={() => setDimension(d.value)}>
+              <button key={d.value} className={`segmented__option${dimension === d.value ? ' segmented__option--active' : ''}`} aria-pressed={dimension === d.value} onClick={() => setDimension(d.value)}>
                 {d.label}
               </button>
             ))}
           </div>
         </div>
         {loading ? (
-          <p className="analytics-loading" role="status">Updating chart…</p>
+          <p className="analytics__loading" role="status">Updating chart…</p>
         ) : !error ? (
           <>
-            <p className="analytics-summary"><strong>{formatHours(totalHours, { long: true })} across {series.length} {groupNoun}</strong></p>
+            <p className="analytics__summary"><strong>{formatHours(totalHours, { long: true })} across {series.length} {groupNoun}</strong></p>
             <TimeChart key={dimension} dimension={dimension} series={series} />
           </>
         ) : null}

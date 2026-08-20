@@ -59,7 +59,7 @@ export default function DocumentDetailPage() {
           </div>
           <div className="segmented">
             {STATUSES.map((s) => (
-              <button type="button" key={s} disabled={Boolean(statusSaving)} className={doc.status === s ? 'active' : ''} onClick={() => setStatus(s)}>
+              <button type="button" key={s} disabled={Boolean(statusSaving)} className={`segmented__option${doc.status === s ? ' segmented__option--active' : ''}`} onClick={() => setStatus(s)}>
                 {statusSaving === s ? 'Saving…' : s}
               </button>
             ))}

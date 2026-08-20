@@ -19,8 +19,8 @@ export default function CheckInTable({ items, onEdit, onDelete }) {
             <td data-label="Department">{checkIn.department}</td>
             <td data-label="Actions">
               <div className="record-actions">
-                <button type="button" className="btn-ghost" onClick={() => onEdit?.(checkIn)}>Edit</button>
-                <button type="button" className="btn-danger" onClick={() => onDelete?.(checkIn)}>Delete</button>
+                <button type="button" className="button--ghost" onClick={() => onEdit?.(checkIn)}>Edit</button>
+                <button type="button" className="button--danger" onClick={() => onDelete?.(checkIn)}>Delete</button>
               </div>
             </td>
           </tr>

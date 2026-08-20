@@ -25,7 +25,7 @@ export default function SuggestionList({ documentId }) {
     <div className="card">
       <div className="section-header" style={{ justifyContent: 'space-between' }}>
         <h3>Suggested next steps</h3>
-        <button className="btn-ghost" onClick={suggest} disabled={busy}>{busy ? '…' : 'Get suggestions'}</button>
+        <button className="button--ghost" onClick={suggest} disabled={busy}>{busy ? '…' : 'Get suggestions'}</button>
       </div>
       {error && <p className="error-text">{error}</p>}
       <ul className="suggestions">

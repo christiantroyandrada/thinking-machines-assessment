@@ -1,0 +1,65 @@
+﻿@layer components {
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .app { flex-direction: column; }
+    .mobile-bar { display: flex; }
+    .sidebar__close { display: inline-flex; }
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      height: 100dvh; width: 280px;
+      z-index: 40; box-shadow: var(--shadow-elevated);
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sidebar.sidebar--open { transform: translateX(0); }
+    .sidebar__backdrop { display: block; }
+    .content { padding-top: calc(3rem + 60px); }
+  }
+
+  @media (max-width: 760px) {
+    .content { @apply px-4 py-5; padding-top: calc(60px + 1.25rem); }
+    .kv { grid-template-columns: 110px 1fr; }
+    .checkins li .muted { margin-left: 0; width: 100%; }
+    .filter-bar { @apply flex-col items-stretch; }
+    .stat strong { font-size: 2rem; }
+    .segmented { @apply w-full flex-wrap; }
+    .segmented__option { flex: 1 1 auto; padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+    .analytics__card { padding: 1rem; }
+    .analytics__card .row-between { gap: 0.75rem; }
+    .time-chart__plot--desktop { display: none; }
+    .time-chart__compact {
+      @apply static flex flex-col;
+      width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
+    }
+    .upload-form__fields { grid-template-columns: 1fr; align-items: stretch; }
+    .upload-form__button { justify-self: start; }
+    .checkin-form__example { display: block; margin: 0.35rem 0 0; line-height: 1.5; }
+    .checkin-form .row { align-items: stretch; }
+    .checkin-form .row input { min-width: 0; width: 100%; }
+    .analytics table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .data-table { display: block; }
+    .data-table thead { display: none; }
+    .data-table tbody { display: grid; gap: 0.75rem; }
+    .data-table tbody tr,
+    .data-table tbody tr:nth-child(even) {
+      display: block; background: var(--color-surface); border: 1px solid var(--color-line);
+      border-radius: var(--radius-card); box-shadow: var(--shadow-soft); overflow: hidden;
+    }
+    .data-table tbody tr:hover,
+    .data-table tbody tr:nth-child(even):hover { background: var(--color-surface); }
+    .data-table td,
+    .data-table td:last-child {
+      display: grid; grid-template-columns: minmax(6.5rem, 36%) 1fr; gap: 0.75rem;
+      align-items: center; min-height: 2.75rem; padding: 0.65rem 0.85rem;
+      text-align: left; overflow-wrap: anywhere;
+    }
+    .data-table td::before {
+      content: attr(data-label); @apply font-mono font-semibold text-muted;
+      font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .record-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .record-actions button, .record-link {
+      display: inline-flex; align-items: center; justify-content: center; min-height: 2.75rem;
+    }
+  }
+}

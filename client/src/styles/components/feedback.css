@@ -1,0 +1,59 @@
+﻿@layer components {
+  /* ---------- Insight / anomaly ---------- */
+  .insight { @apply flex flex-col gap-2; }
+  .insight h4 { font-size: 1rem; }
+  .insight .muted {
+    @apply font-mono text-accent-strong;
+    font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em;
+  }
+  .anomaly {
+    @apply flex items-center gap-3 text-[0.88rem] border rounded-sm;
+    padding: 0.75rem 1rem;
+    transition: transform 0.12s ease, box-shadow 0.15s ease;
+  }
+  .anomaly:hover { transform: translateX(2px); }
+  .anomaly .anomaly__icon {
+    @apply flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center;
+    font-size: 0.7rem;
+  }
+  .anomaly .anomaly__body { @apply flex flex-col gap-0.5 flex-1 min-w-0; }
+  .anomaly .anomaly__type {
+    @apply font-bold text-ink;
+    font-size: 0.82rem; text-transform: capitalize;
+  }
+  .anomaly .anomaly__detail { @apply text-ink-2; }
+  .anomaly .anomaly__entity {
+    @apply text-muted font-mono;
+    font-size: 0.78rem;
+  }
+  .anomaly .muted { @apply text-ink-2; }
+  .anomaly--severity-high {
+    background: var(--color-danger-bg);
+    border-color: color-mix(in oklch, var(--color-danger) 25%, var(--color-line));
+  }
+  .anomaly--severity-high .anomaly__icon { background: var(--color-danger); color: white; }
+  .anomaly--severity-medium {
+    background: var(--color-pending);
+    border-color: color-mix(in oklch, var(--color-pending-fg) 25%, var(--color-line));
+  }
+  .anomaly--severity-medium .anomaly__icon { background: var(--color-pending-fg); color: white; }
+  .anomaly--severity-low { background: var(--color-surface-2); }
+  .anomaly--severity-low .anomaly__icon { background: var(--color-muted); color: white; }
+
+  /* ---------- Errors ---------- */
+  .error { @apply text-danger-fg font-medium; margin: 0.75rem 0; }
+  .error-text { @apply text-danger-fg; font-size: 0.85rem; margin-top: 0.5rem; }
+  .error-banner {
+    background: var(--color-danger-bg); color: var(--color-danger-fg);
+    padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem;
+    border: 1px solid color-mix(in oklch, var(--color-danger) 25%, var(--color-line));
+    @apply font-medium;
+  }
+
+  /* ---------- Loading skeleton ---------- */
+  .skeleton {
+    @apply bg-surface-2 rounded-sm animate-pulse;
+    min-height: 1rem;
+  }
+
+}

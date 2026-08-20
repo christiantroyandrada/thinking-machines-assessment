@@ -20,9 +20,9 @@ test('check-ins list renders seeded data (1000+)', async ({ page }) => {
   const rows = page.locator('section.checkins table tbody tr');
   await expect(rows.first()).toBeVisible();
   await expect(rows).not.toHaveCount(0);
-  await expect(page.locator('.pager')).toContainText(/Page 1 of \d+/);
-  const pagerText = await page.locator('.pager').textContent();
-  const total = Number(pagerText.match(/Page 1 of (\d+)/)?.[1] || 0);
+  await expect(page.locator('.pagination')).toContainText(/Page 1 of \d+/);
+  const paginationText = await page.locator('.pagination').textContent();
+  const total = Number(paginationText.match(/Page 1 of (\d+)/)?.[1] || 0);
   expect(total * 25).toBeGreaterThanOrEqual(1000);
 });
 
@@ -30,7 +30,7 @@ test('analytics page renders dimension sections', async ({ page }) => {
   await page.goto('/analytics');
   await expect(page.getByRole('heading', { name: /Analytics/i })).toBeVisible();
   await expect(page.locator('main')).toBeVisible();
-  await expect(page.locator('.time-chart-plot-desktop')).toBeVisible();
+  await expect(page.locator('.time-chart__plot--desktop')).toBeVisible();
   await expect(page.getByRole('list', { name: 'Time by tag chart' })).toHaveCSS('clip', 'rect(0px, 0px, 0px, 0px)');
 });
 
@@ -40,7 +40,7 @@ test('analytics chart exposes every category in the mobile layout', async ({ pag
 
   const compactChart = page.getByRole('list', { name: 'Time by tag chart' });
   await expect(compactChart).toBeVisible();
-  await expect(page.locator('.time-chart-plot-desktop')).toBeHidden();
+  await expect(page.locator('.time-chart__plot--desktop')).toBeHidden();
 
   const rows = compactChart.getByRole('listitem');
   expect(await rows.count()).toBeGreaterThan(4);

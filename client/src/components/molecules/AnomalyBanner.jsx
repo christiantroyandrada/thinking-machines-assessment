@@ -31,14 +31,14 @@ function AnomalyIcon({ type }) {
 export default function AnomalyBanner({ anomaly }) {
   return (
     <div className={`anomaly severity-${anomaly.severity}`}>
-      <span className="anomaly-icon">
+      <span className="anomaly__icon">
         <AnomalyIcon type={anomaly.type} />
       </span>
-      <div className="anomaly-body">
-        <span className="anomaly-type">{anomaly.type.replace('-', ' ')}</span>
-        <span className="anomaly-detail">{anomaly.detail}</span>
+      <div className="anomaly__body">
+        <span className="anomaly__type">{anomaly.type.replace('-', ' ')}</span>
+        <span className="anomaly__detail">{anomaly.detail}</span>
       </div>
-      <span className="anomaly-entity">{anomaly.entity}</span>
+      <span className="anomaly__entity">{anomaly.entity}</span>
     </div>
   );
 }

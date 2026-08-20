@@ -32,24 +32,24 @@ export default function UploadForm({ onUploaded }) {
 
   return (
     <form className="card upload-form" onSubmit={submit}>
-      <div className="upload-fields">
-        <label className="upload-field" htmlFor="upload-type">
+      <div className="upload-form__fields">
+        <label className="upload-form__field" htmlFor="upload-type">
           <span>Document type</span>
           <select id="upload-type" value={type} onChange={(e) => setType(e.target.value)}>
             <option>PO</option><option>QUOTE</option><option>REQ</option><option>OTHER</option>
           </select>
         </label>
-        <label className="upload-field" htmlFor="upload-title">
+        <label className="upload-form__field" htmlFor="upload-title">
           <span>Document title</span>
           <input id="upload-title" placeholder="Optional — defaults to filename" value={title} onChange={(e) => setTitle(e.target.value)} />
         </label>
-        <label className="upload-field" htmlFor="upload-file">
+        <label className="upload-form__field" htmlFor="upload-file">
           <span>Document file</span>
           <input id="upload-file" type="file" accept=".txt,.md,.csv,.json,.log,text/plain,text/csv,application/json" ref={fileRef} />
         </label>
-        <button className="upload-button" type="submit" disabled={busy}>{busy ? 'Uploading…' : 'Upload'}</button>
+        <button className="upload-form__button" type="submit" disabled={busy}>{busy ? 'Uploading…' : 'Upload'}</button>
       </div>
-      <p className="form-hint">Text, Markdown, CSV, JSON, or log files up to 5 MB.</p>
+      <p className="upload-form__hint">Text, Markdown, CSV, JSON, or log files up to 5 MB.</p>
       {error && <p className="error-text">{error}</p>}
     </form>
   );

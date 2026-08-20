@@ -38,7 +38,7 @@ export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
   }
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal__backdrop" onClick={onClose}>
       <form
         className="card modal"
         onClick={(e) => e.stopPropagation()}
@@ -58,7 +58,7 @@ export default function EditCheckInModal({ checkIn, onSaved, onClose }) {
         <input id="edit-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
         {error && <p className="error-text">{error}</p>}
         <div className="row" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
-          <button type="button" className="btn-ghost" onClick={onClose}>Cancel</button>
+          <button type="button" className="button--ghost" onClick={onClose}>Cancel</button>
           <button type="submit" disabled={saving}>{saving ? 'Saving…' : 'Save'}</button>
         </div>
       </form>

@@ -1,0 +1,52 @@
+﻿@layer components {
+  /* ---------- Analytics bar list ---------- */
+  .analytics ul { @apply list-none p-0; margin-top: 0.75rem; }
+  .analytics .bar {
+    @apply flex items-baseline justify-between;
+    padding: 0.75rem 0; border-bottom: 1px solid var(--color-line);
+  }
+  .analytics .bar span { @apply font-semibold; }
+  .analytics .bar strong { @apply font-mono text-accent-strong; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Time charts ---------- */
+  .analytics__summary { @apply text-muted; margin-top: 0.75rem; }
+  .analytics__summary strong { @apply text-ink-2; font-weight: 600; }
+  .analytics__loading { @apply text-muted; min-height: 20rem; padding-top: 1rem; }
+  .time-chart { container: time-chart / inline-size; margin-top: 0.75rem; min-width: 0; }
+  .time-chart__plot { min-width: 0; }
+  .time-chart__tooltip {
+    @apply flex flex-col gap-1 rounded-md border shadow-card;
+    max-width: 12rem; padding: 0.65rem 0.75rem;
+    background: var(--color-surface); border-color: var(--color-line-strong); color: var(--color-ink);
+  }
+  .time-chart__tooltip span { @apply truncate text-muted; font-size: 0.76rem; }
+  .time-chart__tooltip strong { @apply font-mono text-accent-strong; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  .time-chart__scope { @apply text-muted; margin: 0 0 0.5rem; font-size: 0.76rem; }
+  .time-chart__compact {
+    @apply absolute overflow-hidden list-none;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+  .time-chart__compact li { min-width: 0; }
+  .time-chart__label { @apply flex items-baseline justify-between gap-4; }
+  .time-chart__label span { @apply text-ink-2; min-width: 0; font-size: 0.86rem; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+  .time-chart__label strong { @apply shrink-0 font-mono text-ink; font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+  .time-chart__track { @apply overflow-hidden; height: 0.55rem; margin-top: 0.4rem; border-radius: 2px; background: var(--color-surface-3); }
+  .time-chart__track span { display: block; width: var(--chart-value); height: 100%; border-radius: inherit; background: var(--color-accent-strong); }
+  .time-chart__more { @apply flex justify-center; padding-top: 0.25rem; }
+  .time-chart__more button { min-height: 2.75rem; }
+  .time-chart__plot.time-chart__plot--hidden { display: none; }
+  .time-chart__compact.time-chart__compact--expanded {
+    @apply static flex flex-col;
+    width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
+  }
+
+  @container time-chart (max-width: 34rem) {
+    .time-chart__plot--desktop { display: none; }
+    .time-chart__compact {
+      @apply static flex flex-col;
+      width: auto; height: auto; margin: 0; clip: auto; white-space: normal; gap: 1rem;
+    }
+  }
+
+}

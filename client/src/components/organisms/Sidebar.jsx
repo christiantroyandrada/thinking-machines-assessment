@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { to: '/admin', label: 'Admin', adminOnly: true },
 ];
 
-const ACTIVE_LINK = ({ isActive }) => (isActive ? 'active' : '');
+const ACTIVE_LINK = ({ isActive }) => `sidebar__link${isActive ? ' sidebar__link--active' : ''}`;
 
 export default function Sidebar() {
   const [open, setOpen] = useState(false);
@@ -54,20 +54,20 @@ export default function Sidebar() {
       </header>
 
       {open && (
-        <button type="button" className="sidebar-backdrop" aria-label="Close navigation" onClick={closeAndRestoreFocus} />
+        <button type="button" className="sidebar__backdrop" aria-label="Close navigation" onClick={closeAndRestoreFocus} />
       )}
 
-      <aside className={`sidebar${open ? ' open' : ''}`} aria-label="Primary">
-        <div className="sidebar-header">
+      <aside className={`sidebar${open ? ' sidebar--open' : ''}`} aria-label="Primary">
+        <div className="sidebar__header">
           <Link to="/" className="brand">WorkSmart</Link>
-          <button type="button" className="sidebar-close" aria-label="Close navigation" onClick={closeAndRestoreFocus}>
+          <button type="button" className="sidebar__close" aria-label="Close navigation" onClick={closeAndRestoreFocus}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" />
             </svg>
           </button>
         </div>
 
-        <nav ref={navRef} className="sidebar-nav">
+        <nav ref={navRef} className="sidebar__nav">
           {items.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.end} className={ACTIVE_LINK}>
               {item.label}
@@ -75,10 +75,10 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        <div className="sidebar-footer">
-          <span className="sidebar-user">{currentUser?.name}</span>
-          <div className="sidebar-actions">
-            <button type="button" className="btn-ghost" onClick={() => setCurrentUser(null)}>Switch</button>
+        <div className="sidebar__footer">
+          <span className="sidebar__user">{currentUser?.name}</span>
+          <div className="sidebar__actions">
+            <button type="button" className="button--ghost" onClick={() => setCurrentUser(null)}>Switch</button>
             <ThemeToggle dark={dark} onToggle={toggleTheme} />
           </div>
         </div>
